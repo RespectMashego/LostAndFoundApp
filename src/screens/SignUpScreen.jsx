@@ -22,7 +22,7 @@ const SignUpScreen = () => {
       style={{
         elevation:3
       }}
-        className="mb-5 mx-4 border bg-white border-gray-600  rounded-full   flex-row justify-center items-center  px-10 py-3   "
+        className="mb-5 bg-white mx-4 border  border-gray-600  rounded-full   flex-row justify-center items-center  px-10 py-3   "
       >
         <Image className="absolute left-3" style={{ width: 20, height: 20 }}
           resizeMode='contain'
