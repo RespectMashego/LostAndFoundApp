@@ -18,7 +18,7 @@ const BottomTabNavigator = () => {
             headerShown: false,
             tabBarShowLabel: false,
             tabBarStyle: {
-                backgroundColor: "lightgrey",
+                backgroundColor: "#edeff7",
                 height: 70,
                 position:"absolute",
                 margin:15,
@@ -34,8 +34,8 @@ const BottomTabNavigator = () => {
             <Tab.Screen name="FeedScreen" component={FeedScreen} options={{
                 tabBarIcon: ({ focused }) => (
                     <TouchableOpacity className=" items-center justify-center">
-                        <Feather name="home" size={25} />
-                        <Text>Home</Text>
+                        <Feather name="home" size={25} color="#040824" />
+                        <Text style={{color:"#040824" }} >Home</Text>
                     </TouchableOpacity>
                 )
             }} />
@@ -52,8 +52,8 @@ const BottomTabNavigator = () => {
             options={{
                 tabBarIcon: ({focused}) => (
                     <View className=" items-center justify-center">
-                        <Feather name="user" size={25} />
-                        <Text>profile</Text>
+                        <Feather name="user" size={25} color="#040824"  />
+                        <Text className=""  style={{color:"#040824" }}>profile</Text>
                     </View>
                 )
             }}
