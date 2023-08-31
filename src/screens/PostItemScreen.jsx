@@ -79,7 +79,7 @@ const PostItemScreen = () => {
       </ScrollView>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.submitButton} onPress={handlePostItem}>
-          <Text style={styles.submitButtonText}>Create Post</Text>
+          <Text style={styles.submitButtonText}>Continue</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
