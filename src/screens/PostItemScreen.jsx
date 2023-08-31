@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 const PostItemScreen = () => {
-  const navigation=useNavigation()
+  const navigation = useNavigation()
   const [itemName, setItemName] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
@@ -34,18 +34,20 @@ const PostItemScreen = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={()=>navigation.goBack()}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" color="#19204f" size={30} />
             {/* <Text style={styles.backButtonText}>Home</Text> */}
           </TouchableOpacity>
+
         </View>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Post Lost or Found Item</Text>
+          <Text className="underline " style={styles.title}>Post Lost or Found Item</Text>
         </View>
         <KeyboardAvoidingView style={styles.formContainer} behavior="padding">
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Item Name</Text>
             <TextInput
+              placeholderTextColor={colors.primary.darkblue}
               style={styles.input}
               placeholder="Enter item name"
               value={itemName}
@@ -57,6 +59,7 @@ const PostItemScreen = () => {
             <TextInput
               style={styles.input}
               placeholder="Enter category"
+              placeholderTextColor={colors.primary.darkblue}
               value={category}
               onChangeText={text => setCategory(text)}
             />
@@ -64,6 +67,7 @@ const PostItemScreen = () => {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Description</Text>
             <TextInput
+              placeholderTextColor={colors.primary.darkblue}
               style={styles.input}
               placeholder="Enter description"
               value={description}
@@ -75,7 +79,7 @@ const PostItemScreen = () => {
       </ScrollView>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.submitButton} onPress={handlePostItem}>
-          <Text style={styles.submitButtonText}>Submit</Text>
+          <Text style={styles.submitButtonText}>Create Post</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -91,7 +95,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   header: {
-    margin: 10,
+    margin: 15,
+    flexDirection:"row",
+    alignItems:"center"
   },
   backButton: {
     flexDirection: 'row',
@@ -105,17 +111,19 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 10,
+    marginLeft: 20,
+
   },
   title: {
     fontSize: 19,
     fontWeight: 'bold',
     color: colors.primary.darkblue,
+    
   },
   formContainer: {
     flex: 1,
     margin: 10,
+    marginTop:20
   },
   inputContainer: {
     marginBottom: 20,
@@ -124,8 +132,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 5,
-    marginLeft:10,
-    color:colors.primary.darkblue
+    marginLeft: 10,
+    color: colors.primary.darkblue
   },
   input: {
     backgroundColor: '#f0f0f0',
@@ -134,17 +142,23 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingLeft: 15,
     paddingVertical: 10,
+
   },
   buttonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+
   },
   submitButton: {
-    backgroundColor: 'blue',
+    backgroundColor: colors.primary.blue,
     borderRadius: 20,
-    paddingVertical: 10,
+    paddingVertical: 13,
     paddingHorizontal: 30,
+    width: "93%",
+    justifyContent: "center",
+    alignItems: "center"
+
   },
   submitButtonText: {
     color: 'white',

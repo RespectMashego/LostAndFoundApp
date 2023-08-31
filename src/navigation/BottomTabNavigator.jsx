@@ -38,7 +38,7 @@ const BottomTabNavigator = () => {
             }} />
             <Tab.Screen name="PostItemScreen" component={PostItemScreen} options={{
                 tabBarIcon: ({ focused }) => (
-                    <View className=" items-center justify-center h-14 w-14 rounded-[20px]   bg-blue-950 ">
+                    <View className=" items-center justify-center h-14 w-14 rounded-[20px] bg-primary-darkblue ">
                         < Ionicons name="add" size={26} color={focused ? "red" : 'white'}   />
                     </View>
                 )
