@@ -23,7 +23,7 @@ const Item = () => {
 
                 />
                 <View className="justify-start w-full  ml-4 my-2">
-                    <Text style={{ color: "#040824" }}>Keys</Text>
+                    <Text style={{ color: "#040824",fontSize:18,fontWeight:"500" }}>Keys</Text>
                     <View className="flex-row items-center gap-1">
                         <FontAwesome6 name="location-dot" color="green" size={20} />
                         <Text style={{ color: "#040824" }}>Library</Text>

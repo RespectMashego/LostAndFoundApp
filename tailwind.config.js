@@ -1,11 +1,21 @@
 // tailwind.config.js
 
 module.exports = {
- content: ["./App.{js,jsx,ts,tsx}", "./<custom-folder>/**/*.{js,jsx,ts,tsx}",'./src/**/*.{js,jsx,ts,tsx}',
- './src/**/**/*.{js,jsx,ts,tsx}',
-],
+  content: ["./App.{js,jsx,ts,tsx}", "./<custom-folder>/**/*.{js,jsx,ts,tsx}", './src/**/*.{js,jsx,ts,tsx}',
+    './src/**/**/*.{js,jsx,ts,tsx}',
+  ],
   theme: {
-      extend: {},
+    colors: {
+      primary: {
+        lightblue: "#edeff7",
+        darkblue: "#19204f",
+        gray:"#f0f0f0",
+        white:"white",
+        blue:"#4d77bf"
+
+      },
     },
+
     plugins: [],
   }
+}

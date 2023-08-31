@@ -14,49 +14,48 @@ const BottomTabNavigator = () => {
 
     return (
 
-        <Tab.Navigator initialRouteName='FeedScreen ' screenOptions={{
+        <Tab.Navigator initialRouteName='FeedScreen' screenOptions={{
             headerShown: false,
             tabBarShowLabel: false,
             tabBarStyle: {
                 backgroundColor: "#edeff7",
                 height: 70,
-                position:"absolute",
-                margin:15,
-                borderRadius:30,
-                elevation:0
-
-
-
+                position: "absolute",
+                margin: 15,
+                borderRadius: 30,
+                elevation: 0
             }
 
         }}
         >
             <Tab.Screen name="FeedScreen" component={FeedScreen} options={{
                 tabBarIcon: ({ focused }) => (
-                    <TouchableOpacity className=" items-center justify-center">
-                        <Feather name="home" size={25} color="#040824" />
-                        <Text style={{color:"#040824" }} >Home</Text>
-                    </TouchableOpacity>
+                    <View className=" items-center justify-center">
+                        <Feather name="home" size={25} color={focused ? "red" : '#040824'} />
+                        <Text style={{ color: focused ? "red" : '#040824' }} >Home</Text>
+                    </View>
                 )
             }} />
             <Tab.Screen name="PostItemScreen" component={PostItemScreen} options={{
                 tabBarIcon: ({ focused }) => (
-                    <TouchableOpacity className=" items-center justify-center h-14 w-14 rounded-[20px]   bg-blue-950 ">
-                        < Ionicons name="add" size={26} color="white" />
-                    </TouchableOpacity>
+                    <View className=" items-center justify-center h-14 w-14 rounded-[20px]   bg-blue-950 ">
+                        < Ionicons name="add" size={26} color={focused ? "red" : 'white'}   />
+                    </View>
                 )
+                ,
+                tabBarStyle:{display:"none"}
             }} />
 
 
-            <Tab.Screen name='ProfileScreen' component={ProfileScreen} 
-            options={{
-                tabBarIcon: ({focused}) => (
-                    <View className=" items-center justify-center">
-                        <Feather name="user" size={25} color="#040824"  />
-                        <Text className=""  style={{color:"#040824" }}>profile</Text>
-                    </View>
-                )
-            }}
+            <Tab.Screen name='ProfileScreen' component={ProfileScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View className=" items-center justify-center">
+                            <Feather name="user" size={25} color={focused ? "red" : '#040824'}  />
+                            <Text className=""  style={{ color: focused ? "red" : '#040824' }}>profile</Text>
+                        </View>
+                    )
+                }}
             />
 
 

@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import SignUpScreen from '../screens/SignUpScreen'
 import FeedScreen from '../screens/FeedScreen'
 import BottomTabNavigator from './BottomTabNavigator'
+import PostItemScreen from '../screens/PostItemScreen'
 
 
 const Stack = createNativeStackNavigator()
@@ -18,7 +19,7 @@ const AppStack = () => {
                 animation: 'slide_from_right',
             }}>
                   <Stack.Screen name="Home" component={BottomTabNavigator}/>
-                {/* <Stack.Screen name="SignUpScreen" component={SignUpScreen} /> */}
+                <Stack.Screen name="PostItemScreen" component={PostItemScreen} />
 
             </Stack.Navigator>
         </NavigationContainer>
