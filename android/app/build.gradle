@@ -75,6 +75,7 @@ android {
 
     namespace "com.lostandfoundapp"
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId "com.lostandfoundapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
