@@ -3,15 +3,20 @@ import { View, Text, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoiding
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import { colors } from './colors';
+import { useNavigation } from '@react-navigation/native';
+
 
 const PostItemScreen = () => {
-  const [step, setStep] = useState(1);
+
+  const [step, setStep] = useState(3);
   const [itemName, setItemName] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [selectedImages, setSelectedImages] = useState(Array(4).fill(null));
   const [postType, setPostType] = useState('lost');
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [location, setLocation] = useState("")
+  const navigation = useNavigation()
 
   const handlePostItem = () => {
     // Handle submitting the item to the backend
@@ -27,6 +32,7 @@ const PostItemScreen = () => {
     setItemName('');
     setCategory('');
     setDescription('');
+    setLocation('')
 
     // Navigate back to the initial step after submission
     setStep(1);
@@ -95,73 +101,99 @@ const PostItemScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" color="#19204f" size={30} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Post Lost or Found Item</Text>
-        </View>
+
+
         <KeyboardAvoidingView style={styles.formContainer} behavior="padding">
           {step === 1 && (
-            <View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Item Name</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter item name"
-                  value={itemName}
-                  onChangeText={text => setItemName(text)}
-                />
+            <>
+              <View style={styles.header}>
+                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" color="#19204f" size={30} />
+                </TouchableOpacity>
               </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Category</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter category"
-                  value={category}
-                  onChangeText={text => setCategory(text)}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Description</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter description"
-                  value={description}
-                  onChangeText={text => setDescription(text)}
-                  multiline
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Post Type</Text>
-                <View style={styles.radioContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.radioButton,
-                      postType === 'lost' && styles.radioButtonSelected,
-                    ]}
-                    onPress={() => setPostType('lost')}
-                  >
-                    <Text style={styles.radioButtonText}>Lost</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[
-                      styles.radioButton,
-                      postType === 'found' && styles.radioButtonSelected,
-                    ]}
-                    onPress={() => setPostType('found')}
-                  >
-                    <Text style={styles.radioButtonText}>Found</Text>
-                  </TouchableOpacity>
+              <View>
+
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>Post Lost or Found Item</Text>
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Item Name</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter item name"
+                    value={itemName}
+                    onChangeText={text => setItemName(text)}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Category</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter category"
+                    value={category}
+                    onChangeText={text => setCategory(text)}
+                  />
+                </View>
+
+
+
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Description</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter description"
+                    value={description}
+                    onChangeText={text => setDescription(text)}
+                    multiline
+                  />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Location</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter Location you found or lost the item"
+                    value={location}
+                    onChangeText={text => setLocation(text)}
+                    multiline
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Post Type</Text>
+                  <View style={styles.radioContainer}>
+                    <TouchableOpacity
+                      style={[
+                        styles.radioButton,
+                        postType === 'lost' && styles.radioButtonSelected,
+                      ]}
+                      onPress={() => setPostType('lost')}
+                    >
+                      <Text style={styles.radioButtonText}>Lost</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.radioButton,
+                        postType === 'found' && styles.radioButtonSelected,
+                      ]}
+                      onPress={() => setPostType('found')}
+                    >
+                      <Text style={styles.radioButtonText}>Found</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
+            </>
+
+
           )}
 
           {step === 2 && (
             <View>
+              <View style={styles.header}>
+                <TouchableOpacity style={styles.backButton} onPress={() => setStep(step - 1)}>
+                  <Ionicons name="arrow-back" color="#19204f" size={30} />
+                </TouchableOpacity>
+              </View>
               <Text style={styles.label}>Add Pictures</Text>
               <View style={styles.imageContainer}>
                 {selectedImages.map((image, index) => (
@@ -186,6 +218,55 @@ const PostItemScreen = () => {
               {isCameraOpen && <ActivityIndicator size="large" color="#19204f" />}
             </View>
           )}
+          {step === 3 && (<View>
+            <View style={styles.header}>
+              <TouchableOpacity style={styles.backButton} onPress={() => setStep(step - 1)}>
+                <Ionicons name="arrow-back" color="#19204f" size={30} />
+              </TouchableOpacity>
+            </View>
+            <View>
+
+              <Text style={{
+                color: colors.primary.darkblue,
+                fontSize: 19,
+                fontWeight: "700",
+                marginBottom: 20,
+                marginLeft: 5
+
+              }}>User Info</Text>
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your Name"
+                value={itemName}
+                onChangeText={text => setItemName(text)}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>User Number</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your number"
+                value={itemName}
+                onChangeText={text => setItemName(text)}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Item Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter item name"
+                value={itemName}
+                onChangeText={text => setItemName(text)}
+              />
+            </View>
+
+
+          </View>)
+
+          }
 
         </KeyboardAvoidingView>
       </ScrollView>
@@ -235,6 +316,7 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontWeight: 'bold',
     color: colors.primary.darkblue,
+    marginBottom: 20
   },
   formContainer: {
     flex: 1,
@@ -331,16 +413,16 @@ const styles = StyleSheet.create({
   selectedImage: {
     width: '100%',
     height: '100%',
-    
+
   },
   selectImageButton: {
-     justifyContent:"center",
-     alignItems:"center",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: colors.primary.blue,
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    width:"80%",
+    width: "80%",
     alignSelf: 'center',
     marginTop: 10,
   },
