@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, StyleSheet, ScrollView, ActivityIndicator, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
-import { colors } from './colors';
+import { colors } from '../styles/colors';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -35,7 +35,7 @@ const PostItemScreen = () => {
     setLocation('')
 
     // Navigate back to the initial step after submission
-    setStep(1);
+  navigation.navigate("FeedScreen")
   }
 
   const handleNextStep = () => {
