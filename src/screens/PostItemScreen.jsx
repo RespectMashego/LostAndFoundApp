@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const PostItemScreen = () => {
 
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
   const [itemName, setItemName] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
