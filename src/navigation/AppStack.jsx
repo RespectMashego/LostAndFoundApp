@@ -7,6 +7,7 @@ import FeedScreen from '../screens/FeedScreen'
 import BottomTabNavigator from './BottomTabNavigator'
 import PostItemScreen from '../screens/PostItemScreen'
 import FilterItemScreen from '../screens/FilterItemScreen'
+import ItemView from '../screens/ItemView'
 
 
 const Stack = createNativeStackNavigator()
@@ -18,10 +19,12 @@ const AppStack = () => {
             <Stack.Navigator screenOptions={{
                 headerShown: false,
                 animation: 'slide_from_right',
+                
             }}>
                 <Stack.Screen name="Home" component={BottomTabNavigator}/>
                 <Stack.Screen name="PostItemScreen" component={PostItemScreen} />
                 <Stack.Screen name="FilterItemScreen" component={FilterItemScreen} />
+                <Stack.Screen name="ItemViewScreen" component={ItemView} />
 
             </Stack.Navigator>
         </NavigationContainer>

@@ -13,7 +13,7 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Item from '../components/Item';
-import { colors } from '../styles/colors';
+import { colors } from './colors';
 
 const FeedScreen = () => {
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
