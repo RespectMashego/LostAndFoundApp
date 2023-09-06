@@ -18,6 +18,8 @@ const PostItemScreen = () => {
   const [location, setLocation] = useState("")
   const navigation = useNavigation()
 
+  console.log(selectedImages);
+
   const handlePostItem = () => {
     // Handle submitting the item to the backend
     // You can use this state to send the data to your API
@@ -35,7 +37,7 @@ const PostItemScreen = () => {
     setLocation('')
 
     // Navigate back to the initial step after submission
-  navigation.navigate("FeedScreen")
+    navigation.navigate("FeedScreen")
   }
 
   const handleNextStep = () => {
@@ -200,11 +202,12 @@ const PostItemScreen = () => {
                   <View key={index} style={styles.imageBox}>
                     {image ? (
                       <Image
-                        source={{ uri: `data:${image.mime};base64,${image.data}` }}
+                        source={{ uri: image?.path }}
                         style={styles.selectedImage}
+                        resizeMode="cover" // Add resizeMode
                       />
                     ) : (
-                      <Ionicons name="image-outline" size={50} color="gray" />
+                      <Ionicons  name="image-outline" size={50} color="gray" />
                     )}
                   </View>
                 ))}
@@ -397,10 +400,12 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent:"space-around",
     marginTop: 10,
+ 
   },
   imageBox: {
-    width: '50%',
+   
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -409,10 +414,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 10,
+    height:180,
+    marginRight:1
   },
   selectedImage: {
     width: '100%',
     height: '100%',
+    margin:50
+   
 
   },
   selectImageButton: {
