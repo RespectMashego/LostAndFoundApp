@@ -1,13 +1,35 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useDispatch } from 'react-redux';
+import { clearUser } from '../redux/userSlice';
+import { removeItem } from '../util/asyncStorage';
+import Loader from '../components/Loader';
 
 const LostFoundProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('PostedItems');
+  const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
 
   const switchTab = (tabName) => {
     setActiveTab(tabName);
   };
+
+
+  const handleLogout = async () => {
+    try {
+      setLoading(!loading)
+      dispatch(clearUser())
+      await removeItem("user")
+      await removeItem("token")
+    }
+    catch (error) {
+      console.error('Logout failed', error);
+    } finally {
+      setLoading(false)
+    }
+
+  }
 
   const renderTabContent = () => {
     if (activeTab === 'PostedItems') {
@@ -31,12 +53,18 @@ const LostFoundProfileScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Loader loading={loading}/>
       <Image
         source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbIhi9l4npCGPNWMAc6szDbxp75kjB3c0R5w&usqp=CAU" }}
         style={styles.profileImage}
         resizeMode="cover"
       />
       <Text style={styles.profileName}>John Doe</Text>
+      <TouchableOpacity className="bg-primary-blue rounded-xl   " onPress={handleLogout}>
+        <Text className="text-primary-white px-6 py-3 text-[19px] ">
+          Log out
+        </Text>
+      </TouchableOpacity>
       {/* <Text style={styles.profileBio}>Frontend Developer</Text> */}
 
       <View style={styles.tabContainer}>
