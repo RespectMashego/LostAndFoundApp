@@ -1,39 +1,167 @@
+import {
+    View,
+    Text,
+    SafeAreaView,
+    TouchableOpacity,
+    TextInput,
+    Image,
+    Keyboard,
+    Alert
+} from 'react-native';
+import React, { useState } from 'react';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 
-import React from 'react'
-
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { View, Text, TouchableOpacity, Image, Dimensions } from 'react-native'
-
+//import { useSelector,useDispatch } from 'react-redux
+//import { loginUser } from '../store/slices/userSlice';
+import Loader from '../components/Loader';
+import AuthErrorModal from '../components/AuthErrorModal';
+import axios from 'axios';
+import { setItem } from '../util/asyncStorage';
 
 const SignUpScreen = () => {
+    const [username, setUserName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const navigation = useNavigation();
+    //const dispatch = useDispatch()
+    // const placeholderTextColor='#180D3D'
 
-  return (
-    <SafeAreaView className="bg-white flex-1 ">
-      <Text className="text-center mt-10 mb-5 font-semibold text-xl ">
-        Register  your account today for free
-      </Text>
-      <View className="  flex-1 items-center justify-center">
-        <Image
-          resizeMode='contain'
-          style={{ width: Dimensions.get("window").width * 0.7, hegiht: 300 }} source={require("../assets/images/lostFoundLogo.jpg")} />
-      </View>
+    const handleNavigateBack = () => {
+        navigation.goBack();
+    };
 
-      <TouchableOpacity
-      style={{
-        elevation:3
-      }}
-        className="mb-5 bg-white mx-4 border  border-gray-600  rounded-full   flex-row justify-center items-center  px-10 py-3   "
-      >
-        <Image className="absolute left-3" style={{ width: 20, height: 20 }}
-          resizeMode='contain'
-          source={require("../assets/images/googleIcon.png")} />
-        <Text  className="text-[17px]">
-          Register with google
-        </Text>
-      </TouchableOpacity>
+    const handleNavigateToLoginScreen = () => {
+        navigation.navigate('LogInScreen');
+    };
 
-    </SafeAreaView>
-  )
-}
+    const handleSignUp = async () => {
+        setLoading(!loading);
+        Keyboard.dismiss();
+        try {
+            if (!username || !email || !password) {
+                Alert.alert("Please fill all fields");
+                return;
+            }
+            const respond = await axios.post("http://192.168.74.44:3000/auth/register", {
+                username,
+                email,
+                password
+            });
+            if (respond.status === 201) {
+                console.log("User registration was successful");
+                const {user,token}=respond.data
+                console.log(`user:${user},token:${token}`);
+                setItem("user",user)
+                setItem("token",token)
+            } else {
+                console.error("Registration failed with status", respond.status);
+                setErrorMessage("Registration failed. Please try again.");
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                console.log("User email already exists");
+                console.log("Data from response object", error.response.data);
+                setModalVisible(true);
+                setErrorMessage(error.response.data.message)
+                // Handle the situation where the email already exists
+                // You might want to show an error message to the user
+                // For example:
+                // setError("Email already exists. Please use a different email or log in.");
+            } else {
+                console.error("User registration failed", error.message);
+                setErrorMessage("Registration failed. Please try again.");
+                setModalVisible(true);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    
 
-export default SignUpScreen
+    const handleCloseModal = () => {
+        setModalVisible(false);
+    };
+
+    return (
+        <SafeAreaView style={{ backgroundColor: "white" }} className="bg-primary-white flex-1 justify-center items-center  ">
+            <AuthErrorModal isVisible={modalVisible} onClose={handleCloseModal} errorMessage={errorMessage} />
+            <Loader loading={loading} />
+            <View className="flex-row justify-between items-center w-full p-3 absolute top-0 ">
+                <TouchableOpacity onPress={handleNavigateBack}>
+                    <AntDesign name="arrowleft" size={30} color={'#000'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={handleNavigateToLoginScreen}
+                    className="  border-[1.3px] border-primary-lightGrey rounded-3xl justify-center items-center">
+                    <Text className="px-3 py-2 text-primary-black">Log in</Text>
+                </TouchableOpacity>
+            </View>
+
+            <View className=" flex-1 justify-center items-center w-[90%] mt-10 ">
+                <View className="justify-center items-center mb-8 mt-[20px]">
+                    <Image
+                        className="h-40 w-40 rounded-full"
+                        source={require('../assets/images/lostFoundLogo.jpg')}
+                    />
+                </View>
+                <View>
+                    <Text className="font-semibold text-[20px] text-center text mb-16">
+                        Create your Account
+                    </Text>
+                </View>
+                <TextInput
+                    className="border border-primary-lightGrey rounded-full h-50 w-full px-5 "
+                    placeholder="Full Name"
+                    value={username}
+                    onChangeText={setUserName}
+                />
+                <TextInput
+                    className="border border-primary-lightGrey rounded-full h-50 w-full px-5 mt-4"
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                />
+                {/* <TextInput
+            className="border border-primary-lightGrey rounded-full h-50 w-full px-5  mt-4"
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+          /> */}
+
+                <View className="border border-primary-lightGrey rounded-full h-50 w-full px-5  mt-4 flex-row items-center  ">
+                    <TextInput
+                        placeholder="Password"
+                        secureTextEntry={!showPassword}
+                        value={password}
+                        onChangeText={setPassword}
+                    />
+                    <TouchableOpacity
+                        className="absolute right-5"
+                        onPress={() => setShowPassword(!showPassword)}>
+                        <FontAwesome name={showPassword ? 'eye-slash' : 'eye'} size={20} />
+                    </TouchableOpacity>
+                </View>
+
+                <View className="flex-row gap-x-5 mt-4 justify-between items-center">
+                    <Text>Already have an account?</Text>
+                    <TouchableOpacity onPress={handleNavigateToLoginScreen}>
+                        <Text className="text-primary-blue font-medium">Log In</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <TouchableOpacity onPress={handleSignUp} className="  bg-primary-blue rounded-full  justify-center items-center w-[90%]  mx-auto mb-4 shadow-primary-black">
+                <Text style={{ color: "white" }} className="text-primary-white py-4 font-medium ">Sign Up</Text>
+            </TouchableOpacity>
+        </SafeAreaView>
+    );
+};
+
+export default SignUpScreen;
