@@ -19,6 +19,8 @@ import Loader from '../components/Loader';
 import AuthErrorModal from '../components/AuthErrorModal';
 import axios from 'axios';
 import { setItem } from '../util/asyncStorage';
+import { setUser } from '../redux/userSlice';
+import { useDispatch } from 'react-redux';
 
 const SignUpScreen = () => {
     const [username, setUserName] = useState('');
@@ -29,7 +31,7 @@ const SignUpScreen = () => {
     const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const navigation = useNavigation();
-    //const dispatch = useDispatch()
+    const dispatch = useDispatch()
     // const placeholderTextColor='#180D3D'
 
     const handleNavigateBack = () => {
@@ -55,10 +57,13 @@ const SignUpScreen = () => {
             });
             if (respond.status === 201) {
                 console.log("User registration was successful");
-                const {user,token}=respond.data
+                const { user, token } = respond.data
+                console.log(user?.username);
                 console.log(`user:${user},token:${token}`);
-                setItem("user",user)
-                setItem("token",token)
+                dispatch(setUser({user,token}));
+                setItem("user", JSON.stringify(user))
+                setItem("token", token)
+
             } else {
                 console.error("Registration failed with status", respond.status);
                 setErrorMessage("Registration failed. Please try again.");
@@ -82,8 +87,8 @@ const SignUpScreen = () => {
             setLoading(false);
         }
     };
-    
-    
+
+
 
     const handleCloseModal = () => {
         setModalVisible(false);
