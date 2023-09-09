@@ -4,6 +4,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import { colors } from './colors';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import Loader from '../components/Loader';
 
 
 const PostItemScreen = () => {
@@ -13,38 +15,78 @@ const PostItemScreen = () => {
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [selectedImages, setSelectedImages] = useState(Array(4).fill(null));
-  const [postType, setPostType] = useState('lost');
+  const [postType, setPostType] = useState('found');
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [location, setLocation] = useState("")
+  const [contact, setContact] = useState("")
+  const [loading, setLoading] = useState("")
   const navigation = useNavigation()
 
   console.log(selectedImages);
 
-  const handlePostItem = () => {
-    // Handle submitting the item to the backend
-    // You can use this state to send the data to your API
-    const newItem = {
-      itemName,
-      category,
-      description,
-      // Add other properties here
-    };
+  const handlePostItem = async () => {
+    setLoading(!loading
+    )
+    const formData = new FormData();
+    formData.append('itemName', itemName);
+    formData.append('category', category);
+    formData.append('description', description);
+    formData.append('location', location);
+    formData.append('contact', contact);
+    formData.append('postType', postType);
+
+    // Loop through selectedImages and append each image to formData
+    selectedImages.forEach((image, index) => {
+      if (image) {
+        const filename = `image${index}.jpg`;
+        const file = {
+          uri: image.path,
+          type: 'image/jpeg',
+          name: filename,
+        };
+        formData.append(`images`, file);
+      }
+    });
+
+    try {
+      const response = await axios.post('http://192.168.74.44:3000/api/item', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 201) {
+        console.log('Item posted successfully');
+      } else {
+        console.log('Failed to post item');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false)
+    }
 
     // Reset the form fields after submitting
     setItemName('');
     setCategory('');
     setDescription('');
-    setLocation('')
+    setLocation('');
+    setContact(""),
+      setLocation()
 
     // Navigate back to the initial step after submission
-    navigation.navigate("FeedScreen")
-  }
+    navigation.navigate('FeedScreen');
+  };
+
 
   const handleNextStep = () => {
     // Validate and move to the next step
-    if (step === 1 && (!itemName || !category || !description)) {
+    if (step === 1 && (!itemName || !category || !description || !contact || !location)) {
       alert('Please fill in all fields.');
       return;
+    }
+    if (step === 2 && (!selectedImages)) {
+      alert('Please select at least one image of the item');
     }
 
     // You can add more validation for other steps if needed
@@ -64,6 +106,7 @@ const PostItemScreen = () => {
         // Distribute selected images into empty slots
         const newImages = [...selectedImages];
         images.forEach((image, index) => {
+          console.log(image);
           const emptySlotIndex = newImages.findIndex((img) => img === null);
           if (emptySlotIndex !== -1) {
             newImages[emptySlotIndex] = image;
@@ -74,6 +117,7 @@ const PostItemScreen = () => {
       }
     } catch (error) {
       console.error('ImagePicker Error:', error);
+
     }
   };
 
@@ -103,7 +147,7 @@ const PostItemScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-
+        <Loader loading={loading} />
 
         <KeyboardAvoidingView style={styles.formContainer} behavior="padding">
           {step === 1 && (
@@ -149,6 +193,16 @@ const PostItemScreen = () => {
                     multiline
                   />
                 </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Contact Information</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter Contact information"
+                    value={contact}
+                    onChangeText={text => setContact(text)}
+                    multiline
+                  />
+                </View>
 
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Location</Text>
@@ -160,7 +214,7 @@ const PostItemScreen = () => {
                     multiline
                   />
                 </View>
-                <View style={styles.inputContainer}>
+                {/* <View style={styles.inputContainer}>
                   <Text style={styles.label}>Post Type</Text>
                   <View style={styles.radioContainer}>
                     <TouchableOpacity
@@ -182,7 +236,7 @@ const PostItemScreen = () => {
                       <Text style={styles.radioButtonText}>Found</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
+                </View> */}
               </View>
             </>
 
@@ -207,7 +261,7 @@ const PostItemScreen = () => {
                         resizeMode="cover" // Add resizeMode
                       />
                     ) : (
-                      <Ionicons  name="image-outline" size={50} color="gray" />
+                      <Ionicons name="image-outline" size={50} color="gray" />
                     )}
                   </View>
                 ))}
@@ -221,7 +275,7 @@ const PostItemScreen = () => {
               {isCameraOpen && <ActivityIndicator size="large" color="#19204f" />}
             </View>
           )}
-          {step === 3 && (<View>
+          {/* {step === 3 && (<View>
             <View style={styles.header}>
               <TouchableOpacity style={styles.backButton} onPress={() => setStep(step - 1)}>
                 <Ionicons name="arrow-back" color="#19204f" size={30} />
@@ -269,12 +323,12 @@ const PostItemScreen = () => {
 
           </View>)
 
-          }
+          } */}
 
         </KeyboardAvoidingView>
       </ScrollView>
       <View style={styles.buttonContainer}>
-        {step < 3 ? (
+        {step < 2 ? (
           <TouchableOpacity style={styles.continueButton} onPress={handleNextStep}>
             <Text style={styles.continueButtonText}>Continue</Text>
           </TouchableOpacity>
@@ -400,12 +454,12 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent:"space-around",
+    justifyContent: "space-around",
     marginTop: 10,
- 
+
   },
   imageBox: {
-   
+
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -414,14 +468,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 10,
-    height:180,
-    marginRight:1
+    height: 180,
+    marginRight: 1
   },
   selectedImage: {
     width: '100%',
     height: '100%',
-    margin:50
-   
+    margin: 50
+
 
   },
   selectImageButton: {
