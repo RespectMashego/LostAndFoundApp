@@ -6,6 +6,7 @@ import { colors } from './colors';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import Loader from '../components/Loader';
+import { getItem } from '../util/asyncStorage';
 
 
 const PostItemScreen = () => {
@@ -25,8 +26,10 @@ const PostItemScreen = () => {
   console.log(selectedImages);
 
   const handlePostItem = async () => {
+
     setLoading(!loading
     )
+    const token = await getItem("token")
     const formData = new FormData();
     formData.append('itemName', itemName);
     formData.append('category', category);
@@ -52,6 +55,7 @@ const PostItemScreen = () => {
       const response = await axios.post('http://192.168.74.44:3000/api/item', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`,
         },
       });
 
@@ -72,7 +76,9 @@ const PostItemScreen = () => {
     setDescription('');
     setLocation('');
     setContact(""),
-      setLocation()
+      setLocation(),
+      setSelectedImages(Array(4).fill(null))
+    setStep(1)
 
     // Navigate back to the initial step after submission
     navigation.navigate('FeedScreen');
