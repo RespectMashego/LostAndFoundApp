@@ -2,6 +2,7 @@ import { useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const demoItem = {
     title: 'Keys',
@@ -15,14 +16,14 @@ const demoItem = {
 };
 
 const ItemView = () => {
-    const  route  = useRoute()
-    const item=route?.params.item
+    const route = useRoute()
+    const item = route?.params.item
     console.log(item);
 
 
 
     const [mainImage] = useState(item?.images[0]);
-    const thumbnailIcons = [item?.images.splice(1,1)]; // Placeholder icons
+    const thumbnailIcons = [item?.images.splice(1, 1)]; // Placeholder icons
 
     const handleThumbnailPress = (image) => {
         // Handle changing the main image when a thumbnail is pressed
@@ -37,6 +38,9 @@ const ItemView = () => {
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" color="#19204f" size={30} />
+            </TouchableOpacity>
             <Image
                 source={{ uri: mainImage }}
                 style={styles.image}
@@ -75,14 +79,26 @@ const styles = StyleSheet.create({
         backgroundColor: '#F8F8F8',
     },
     image: {
-        width: '100%',
-        aspectRatio: 1, // This maintains the aspect ratio of the image
+        flex: 1, // Add this line to make the image expand and center vertically and horizontally
+        alignSelf: 'center', // Add this line to center horizontally within its parent
+        aspectRatio: 1,
+        marginVertical:35,
+        borderRadius:25,
+        elevation:5,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        borderRadius: 10,
+
     },
     thumbnailContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 16,
+        paddingHorizontal: 20,
         marginTop: 16,
+        
+
+        
     },
     thumbnailIcon: {
         width: 60,
@@ -92,10 +108,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#edeff7', // Background color for the icon
         textAlign: 'center',
         lineHeight: 60,
+        
     },
     detailsContainer: {
         marginTop: 16,
-        padding: 16,
+        padding: 20,
     },
     title: {
         fontSize: 28,
@@ -143,6 +160,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
     },
+    backButton:{
+        marginTop:20,
+        marginLeft:20
+    }
     // Add styles for additional item details here
 });
 

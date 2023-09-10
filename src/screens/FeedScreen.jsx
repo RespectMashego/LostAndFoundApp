@@ -16,6 +16,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Item from '../components/Item';
 import { colors } from './colors';
 import axios from 'axios';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons"
+import Loader from '../components/Loader';
 
 const FeedScreen = () => {
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
@@ -23,6 +25,7 @@ const FeedScreen = () => {
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
   const [searchText, setSearchText] = useState('');
+  const [loading, setLoading] = useState(false)
 
   const [feedItems, setFeedItems] = useState([])
 
@@ -47,6 +50,8 @@ const FeedScreen = () => {
     // You can add search functionality here
   };
   const fetchItems = async () => {
+
+    setLoading(true)
     try {
       const response = await axios.get("http://192.168.74.44:3000/api/feed")
       const items = await response.data.items
@@ -64,7 +69,9 @@ const FeedScreen = () => {
     catch (error) {
       console.error("error", error)
     }
-
+    finally {
+      setLoading(false)
+    }
 
   }
 
@@ -77,6 +84,9 @@ const FeedScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity style={{}} onPress={fetchItems}>
+          <MaterialIcons name="refresh" size={25} color={colors.primary.darkblue} />
+        </TouchableOpacity>
         <View style={styles.searchBar}>
           <View style={styles.searchInput}>
             <TextInput
@@ -115,10 +125,12 @@ const FeedScreen = () => {
         <Item />
         <Item />
       </ScrollView> */}
-  <FlatList
+      <Loader loading={loading} />
+
+      <FlatList
         contentContainerStyle={styles.listContainer}
         data={feedItems}
-        style={{marginBottom:70}}
+        style={{ marginBottom: 70 }}
         numColumns={2}
         renderItem={({ item }) => <Item item={item} />}
         keyExtractor={item => item.id}
@@ -318,8 +330,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F8F8',
     alignItems: 'center',
-    
-    
+
+
   },
   header: {
     flexDirection: 'row',
@@ -348,8 +360,8 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flexGrow: 1,
-   
-  
+
+
   },
   filterButton: {
     backgroundColor: '#040824',

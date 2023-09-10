@@ -9,7 +9,7 @@ const Loader = ({loading}) => {
   return (
     <View style={styles.container}>
       <LottieView
-        style={{width:65, height: 65}}
+        style={{width:65, height: 65,zIndex:4}}
         source={require('../assets/animation/circularLoader.json')}
         autoPlay
         loop
@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:'#f3f3f3'
+    backgroundColor:'transparent',
+    zIndex:4
   },
 });
