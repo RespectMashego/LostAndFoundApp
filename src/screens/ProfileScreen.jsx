@@ -1,15 +1,54 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../redux/userSlice';
-import { removeItem } from '../util/asyncStorage';
+import { getItem, removeItem } from '../util/asyncStorage';
 import Loader from '../components/Loader';
+import axios from 'axios';
+import Item from '../components/Item';
 
 const LostFoundProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('PostedItems');
   const [loading, setLoading] = useState(false)
+  const [userPostedItems, setUserPostedItems] = useState([])
+  const [istherError, setIstheError] = useState(false)
   const dispatch = useDispatch()
+
+  const fetchUserItems = async () => {
+    setIstheError(false)
+    setLoading(true)
+    const token = await getItem("token")
+    try {
+      const response = await axios("http://192.168.74.44:3000/user/posted-items", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      if (response.status == 200) {
+
+        const items = await response.data.userPostedItems
+        console.log(items);
+        setUserPostedItems(items)
+        setIstheError(false)
+      } else {
+        console.error("error occured")
+      }
+    }
+    catch (error) {
+      console.error("error occured", error)
+      setIstheError(true)
+    }
+    finally {
+      setLoading(false)
+    }
+
+  }
+
+  useEffect(() => {
+    fetchUserItems()
+
+  }, [])
 
   const switchTab = (tabName) => {
     setActiveTab(tabName);
@@ -37,7 +76,29 @@ const LostFoundProfileScreen = () => {
         <View style={styles.tabContent}>
           {/* Display the user's posted items here */}
           {/* You can use a FlatList or any other component to display the items */}
-          <Text>Your Posted Items</Text>
+          {istherError ? <View>
+
+            <Text>Failed to load</Text>
+            <TouchableOpacity className="flex-row items-center bg-primary-blue gap-x-2">
+              <Text className="text-md text-primary-white mr-1 ">refresh</Text>
+              <TouchableOpacity style={{}} onPress={fetchUserItems}>
+                <MaterialIcons name="refresh" size={25} color={"white"} />
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </View> :
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.listContainer}
+              data={userPostedItems}
+              style={{ marginBottom: 70 }}
+              numColumns={2}
+              renderItem={({ item }) => <Item item={item} />}
+              keyExtractor={item => item.id}
+            />
+          }
+
+
+
         </View>
       );
     } else if (activeTab === 'Notifications') {
@@ -53,7 +114,7 @@ const LostFoundProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Loader loading={loading}/>
+      <Loader loading={loading} />
       <Image
         source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbIhi9l4npCGPNWMAc6szDbxp75kjB3c0R5w&usqp=CAU" }}
         style={styles.profileImage}
@@ -105,6 +166,12 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
+  listContainer: {
+    flexGrow: 1,
+
+
+
+  },
   profileImage: {
     width: 150,
     height: 150,
@@ -123,7 +190,7 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
+
   },
   tab: {
     flex: 1,
@@ -141,6 +208,10 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     width: '100%',
+    height: "62%",
+    marginBottom: 70,
+    overflow: "hidden",
+    // backgroundColor:"red"
   },
   editButton: {
     backgroundColor: '#3498db',

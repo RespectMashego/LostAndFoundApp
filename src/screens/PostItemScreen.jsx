@@ -339,7 +339,7 @@ const PostItemScreen = () => {
             <Text style={styles.continueButtonText}>Continue</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.submitButton} onPress={handlePostItem}>
+          <TouchableOpacity disabled={loading} style={[styles.submitButton,{backgroundColor:loading? "lightblue" :""}]} onPress={handlePostItem}>
             <Text style={styles.submitButtonText}>Create Post</Text>
           </TouchableOpacity>
         )}

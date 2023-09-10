@@ -1,23 +1,21 @@
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const demoItem = {
-    title: 'Keys',
-    location: 'Library',
-    timestamp: '54 mins ago',
-    description: 'A set of keys found near the front entrance.',
-    contact: 'John Doe (johndoe@example.com)',
-    itemType: 'Book',
-    postType: 'Found',
-    // Add more item details here
+const options = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
 };
 
 const ItemView = () => {
     const route = useRoute()
     const item = route?.params.item
+    const navigation=useNavigation()
     console.log(item);
 
 
@@ -57,11 +55,11 @@ const ItemView = () => {
                 ))}
             </View>
             <View style={styles.detailsContainer}>
-                <Text style={styles.title}>{item?.itemName}</Text>
-                <Text style={styles.location}>{item?.location}</Text>
-                <Text style={styles.timestamp}>posted at {item?.timestamp}</Text>
-                <Text style={styles.description}>{item.description}</Text>
-                <Text style={styles.itemType}>Item Type: {item?.itemType}</Text>
+                <Text style={styles.title}>Item Name:{item?.itemName}</Text>
+                <Text style={styles.location}>Location:{item?.location}</Text>
+                <Text style={styles.timestamp}>posted at {new Date(item.createdAt).toLocaleString(undefined, options)}</Text>
+                <Text style={styles.description}>Description:{item.description}</Text>
+                <Text style={styles.itemType}>Item Type: {item?.postType}</Text>
                 <Text style={styles.itemType}>Contact Information : {item?.contact}</Text>
                 {/* <Text style={styles.postType}>Post Type: {item.postType}</Text>
                 <TouchableOpacity style={styles.contactButton} onPress={handleContactPress}>
@@ -82,9 +80,9 @@ const styles = StyleSheet.create({
         flex: 1, // Add this line to make the image expand and center vertically and horizontally
         alignSelf: 'center', // Add this line to center horizontally within its parent
         aspectRatio: 1,
-        marginVertical:35,
-        borderRadius:25,
-        elevation:5,
+        marginVertical: 35,
+        borderRadius: 25,
+        elevation: 5,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
@@ -96,9 +94,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 20,
         marginTop: 16,
-        
 
-        
+
+
     },
     thumbnailIcon: {
         width: 60,
@@ -108,7 +106,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#edeff7', // Background color for the icon
         textAlign: 'center',
         lineHeight: 60,
-        
+
     },
     detailsContainer: {
         marginTop: 16,
@@ -160,9 +158,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
     },
-    backButton:{
-        marginTop:20,
-        marginLeft:20
+    backButton: {
+        marginTop: 20,
+        marginLeft: 20
     }
     // Add styles for additional item details here
 });

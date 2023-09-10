@@ -128,6 +128,7 @@ const FeedScreen = () => {
       <Loader loading={loading} />
 
       <FlatList
+      showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
         data={feedItems}
         style={{ marginBottom: 70 }}
