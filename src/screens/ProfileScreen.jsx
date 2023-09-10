@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../redux/userSlice';
 import { getItem, removeItem } from '../util/asyncStorage';
 import Loader from '../components/Loader';
 import axios from 'axios';
 import Item from '../components/Item';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons"
 
 const LostFoundProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('PostedItems');
   const [loading, setLoading] = useState(false)
   const [userPostedItems, setUserPostedItems] = useState([])
   const [istherError, setIstheError] = useState(false)
+  const [userr, setUserr] = useState('')
   const dispatch = useDispatch()
+  const user = useSelector((state) => state.user.user);
+  useEffect(() => {
+    console.log(user);
+
+  }, [user])
+  console.log("user", user);
 
   const fetchUserItems = async () => {
     setIstheError(false)
@@ -93,7 +101,7 @@ const LostFoundProfileScreen = () => {
               style={{ marginBottom: 70 }}
               numColumns={2}
               renderItem={({ item }) => <Item item={item} />}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item._id}
             />
           }
 
@@ -115,17 +123,14 @@ const LostFoundProfileScreen = () => {
   return (
     <View style={styles.container}>
       <Loader loading={loading} />
-      <Image
+      {/* <Image
         source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbIhi9l4npCGPNWMAc6szDbxp75kjB3c0R5w&usqp=CAU" }}
         style={styles.profileImage}
         resizeMode="cover"
       />
-      <Text style={styles.profileName}>John Doe</Text>
-      <TouchableOpacity className="bg-primary-blue rounded-xl   " onPress={handleLogout}>
-        <Text className="text-primary-white px-6 py-3 text-[19px] ">
-          Log out
-        </Text>
-      </TouchableOpacity>
+      <Text style={styles.profileName}>{user?.username}</Text>
+      <Text style={styles.profileName}>{user?.email}</Text> */}
+
       {/* <Text style={styles.profileBio}>Frontend Developer</Text> */}
 
       <View style={styles.tabContainer}>
@@ -155,6 +160,11 @@ const LostFoundProfileScreen = () => {
       {/* <TouchableOpacity style={styles.editButton}>
         <Text style={styles.editButtonText}>Edit Profile</Text>
       </TouchableOpacity> */}
+      <TouchableOpacity className="bg-primary-blue rounded-xl   " onPress={handleLogout}>
+        <Text className="text-primary-white px-6 py-3 text-[19px] ">
+          Log out
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -208,8 +218,8 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     width: '100%',
-    height: "62%",
-    marginBottom: 70,
+    // height: "75%",
+
     overflow: "hidden",
     // backgroundColor:"red"
   },

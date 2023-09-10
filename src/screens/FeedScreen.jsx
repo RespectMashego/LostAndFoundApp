@@ -126,6 +126,7 @@ const FeedScreen = () => {
         <Item />
       </ScrollView> */}
       <Loader loading={loading} />
+      
 
       <FlatList
       showsVerticalScrollIndicator={false}
@@ -134,7 +135,7 @@ const FeedScreen = () => {
         style={{ marginBottom: 70 }}
         numColumns={2}
         renderItem={({ item }) => <Item item={item} />}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item._id}
       />
 
       {/* Filter Modal */}

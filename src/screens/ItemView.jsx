@@ -15,23 +15,20 @@ const options = {
 const ItemView = () => {
     const route = useRoute()
     const item = route?.params.item
-    const navigation=useNavigation()
-    console.log(item);
+    const navigation = useNavigation()
+    const itemImages = item?.images
+    const [thumbnailImages, setThumbnailImages] = useState(item?.images) // Placeholder icons
+    const [activeThumbnailIndex, setActiveThumbnailIndex] = useState(0)
+    console.log(thumbnailImages);
+    const [mainImage, setMainImage] = useState(item?.images[0]);
 
 
 
-    const [mainImage] = useState(item?.images[0]);
-    const thumbnailIcons = [item?.images.splice(1, 1)]; // Placeholder icons
 
-    const handleThumbnailPress = (image) => {
-        // Handle changing the main image when a thumbnail is pressed
-        // You can implement this logic if needed
-    };
+    const handleThumbnailPress = (image, index) => {
+        setMainImage(image)
+        setActiveThumbnailIndex(index)
 
-    const handleContactPress = () => {
-        // Implement your contact logic here
-        // For example, you can open an email client with the contact email
-        // or show a contact form.
     };
 
     return (
@@ -45,12 +42,14 @@ const ItemView = () => {
                 resizeMode="cover"
             />
             <View style={styles.thumbnailContainer}>
-                {thumbnailIcons.map((icon, index) => (
+                {thumbnailImages?.map((item, index) => (
                     <TouchableOpacity
                         key={index}
-                        onPress={() => handleThumbnailPress(item.thumbnailImages[index])}
+                        onPress={() => handleThumbnailPress(item, index)}
+                        style={index === activeThumbnailIndex && styles.activeThumbnail}
                     >
-                        <FontAwesome name={icon} size={48} style={styles.thumbnailIcon} />
+                        <Image style={styles.thumbnailIcon} source={{ uri: item }} />
+                        {/* <FontAwesome name={icon} size={48} /> */}
                     </TouchableOpacity>
                 ))}
             </View>
@@ -75,6 +74,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F8F8F8',
+    },
+    activeThumbnail: {
+        borderWidth: 2,
+        borderColor: "red",
+        borderRadius: 12
     },
     image: {
         flex: 1, // Add this line to make the image expand and center vertically and horizontally
@@ -102,7 +106,7 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 10,
-        marginBottom: 8,
+        // marginBottom: 8,
         backgroundColor: '#edeff7', // Background color for the icon
         textAlign: 'center',
         lineHeight: 60,

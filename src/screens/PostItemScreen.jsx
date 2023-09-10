@@ -20,7 +20,7 @@ const PostItemScreen = () => {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [location, setLocation] = useState("")
   const [contact, setContact] = useState("")
-  const [loading, setLoading] = useState("")
+  const [loading, setLoading] = useState(false)
   const navigation = useNavigation()
 
   console.log(selectedImages);
