@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,14 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
+  FlatList,
   Modal,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Item from '../components/Item';
 import { colors } from './colors';
+import axios from 'axios';
 
 const FeedScreen = () => {
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
@@ -21,6 +23,8 @@ const FeedScreen = () => {
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
   const [searchText, setSearchText] = useState('');
+
+  const [feedItems, setFeedItems] = useState([])
 
   const toggleFilterModal = () => {
     setFilterModalVisible(!isFilterModalVisible);
@@ -42,6 +46,33 @@ const FeedScreen = () => {
     setSearchText(text);
     // You can add search functionality here
   };
+  const fetchItems = async () => {
+    try {
+      const response = await axios.get("http://192.168.74.44:3000/api/feed")
+      const items = await response.data.items
+
+      if (response.status == 200) {
+        console.log(items);
+        setFeedItems(items)
+        console.log("feed items fetched sucessfully")
+      } else {
+        console.log("failed to fetch items")
+      }
+
+
+    }
+    catch (error) {
+      console.error("error", error)
+    }
+
+
+  }
+
+  useEffect(() => {
+
+    fetchItems()
+
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -65,7 +96,7 @@ const FeedScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView
+      {/* <ScrollView
         contentContainerStyle={{
           height: '100%',
           flexDirection: 'row',
@@ -83,7 +114,15 @@ const FeedScreen = () => {
         <Item />
         <Item />
         <Item />
-      </ScrollView>
+      </ScrollView> */}
+  <FlatList
+        contentContainerStyle={styles.listContainer}
+        data={feedItems}
+        style={{marginBottom:70}}
+        numColumns={2}
+        renderItem={({ item }) => <Item item={item} />}
+        keyExtractor={item => item.id}
+      />
 
       {/* Filter Modal */}
       <Modal
@@ -278,6 +317,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F8F8',
+    alignItems: 'center',
+    
+    
   },
   header: {
     flexDirection: 'row',
@@ -298,11 +340,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginRight: 15,
     borderRadius: 10000,
-    flexDirection:"row",
-    alignItems:"center",
-    justifyContent:"space-between",
-    paddingHorizontal:10
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 10
 
+  },
+  listContainer: {
+    flexGrow: 1,
+   
+  
   },
   filterButton: {
     backgroundColor: '#040824',

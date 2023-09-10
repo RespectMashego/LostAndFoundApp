@@ -1,3 +1,4 @@
+import { useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -13,9 +14,15 @@ const demoItem = {
     // Add more item details here
 };
 
-const ItemView = ({ item = demoItem }) => {
-    const [mainImage] = useState('https://m.media-amazon.com/images/I/71h8ATGZZpL.jpg');
-    const thumbnailIcons = ['image', 'image', 'image',"image"]; // Placeholder icons
+const ItemView = () => {
+    const  route  = useRoute()
+    const item=route?.params.item
+    console.log(item);
+
+
+
+    const [mainImage] = useState(item?.images[0]);
+    const thumbnailIcons = [item?.images.splice(1,1)]; // Placeholder icons
 
     const handleThumbnailPress = (image) => {
         // Handle changing the main image when a thumbnail is pressed
@@ -46,15 +53,16 @@ const ItemView = ({ item = demoItem }) => {
                 ))}
             </View>
             <View style={styles.detailsContainer}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.location}>{item.location}</Text>
-                <Text style={styles.timestamp}>{item.timestamp}</Text>
+                <Text style={styles.title}>{item?.itemName}</Text>
+                <Text style={styles.location}>{item?.location}</Text>
+                <Text style={styles.timestamp}>posted at {item?.timestamp}</Text>
                 <Text style={styles.description}>{item.description}</Text>
-                <Text style={styles.itemType}>Item Type: {item.itemType}</Text>
-                <Text style={styles.postType}>Post Type: {item.postType}</Text>
+                <Text style={styles.itemType}>Item Type: {item?.itemType}</Text>
+                <Text style={styles.itemType}>Contact Information : {item?.contact}</Text>
+                {/* <Text style={styles.postType}>Post Type: {item.postType}</Text>
                 <TouchableOpacity style={styles.contactButton} onPress={handleContactPress}>
                     <Text style={styles.contactButtonText}>Contact</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 {/* Add more item details here */}
             </View>
         </View>

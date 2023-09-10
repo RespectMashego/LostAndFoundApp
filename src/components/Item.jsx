@@ -3,27 +3,34 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet } from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
-const Item = () => {
+const Item = ({ item }) => {
     const navigation = useNavigation()
+    const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+    };
     const handleItemView = () => {
-        navigation.navigate("ItemViewScreen")
+        navigation.navigate("ItemViewScreen", { item: item })
     }
     return (
         <TouchableOpacity style={styles.container} onPress={handleItemView}>
             <View style={styles.imageContainer}>
                 <Image
-                    source={{ uri: 'https://m.media-amazon.com/images/I/71h8ATGZZpL.jpg' }}
+                    source={{ uri: item.images[0] }}
                     style={styles.image}
                     resizeMode="cover"
                 />
             </View>
             <View style={styles.contentContainer}>
-                <Text style={styles.title}>Keys</Text>
+                <Text style={styles.title}>{item.itemName}</Text>
                 <View style={styles.locationContainer}>
                     <FontAwesome6 name="location-dot" color="green" size={20} />
-                    <Text style={styles.locationText}>Library</Text>
+                    <Text style={styles.locationText}>{item.location}</Text>
                 </View>
-                <Text style={styles.timestamp}>54 mins ago</Text>
+                <Text style={styles.timestamp}>{new Date(item.createdAt).toLocaleString(undefined, options)}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -40,6 +47,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         backgroundColor: '#edeff7',
         borderRadius: 10,
+        margin: 13
+
     },
     imageContainer: {
         borderTopLeftRadius: 10,
