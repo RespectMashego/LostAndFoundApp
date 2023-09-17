@@ -18,6 +18,7 @@ import axios from 'axios';
 import { setItem } from '../util/asyncStorage';
 import { setUser } from '../redux/userSlice';
 import { useDispatch } from 'react-redux';
+import { baseUrl } from '../util/baseUrl';
 
 const LogInScreen = () => {
   const [email, setEmail] = useState('');
@@ -42,7 +43,7 @@ const LogInScreen = () => {
         return;
       }
       const respond = await axios.post(
-        'http://192.168.74.44:3000/auth/login', // Replace with your login endpoint
+        `${baseUrl}/auth/login`, // Replace with your login endpoint
         {
           email,
           password,
@@ -58,13 +59,15 @@ const LogInScreen = () => {
         setItem('token', token);
       } else {
         console.error('Login failed with status', respond.status);
+        setModalVisible(true);
         setErrorMessage('Login failed. Please try again.');
       }
     } catch (error) {
       if(error.response && error.response.status === 404){
+        setModalVisible(true);
         setErrorMessage(error.response.data.message);
         console.error("user not found")
-        setModalVisible(true);
+       
 
       }
       if (error.response && error.response.status === 401) {

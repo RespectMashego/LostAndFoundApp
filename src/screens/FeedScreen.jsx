@@ -18,8 +18,9 @@ import { colors } from './colors';
 import axios from 'axios';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons"
 import Loader from '../components/Loader';
+import { baseUrl } from '../util/baseUrl';
 
-const FeedScreen = () => {
+const FeedScreen = ({ navigation, route }) => {
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -28,6 +29,26 @@ const FeedScreen = () => {
   const [loading, setLoading] = useState(false)
 
   const [feedItems, setFeedItems] = useState([])
+  useEffect(() => {
+    // Fetch items when the screen mounts
+    fetchItems();
+
+    // Add a listener for the 'focus' event
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Check if the 'shouldReload' flag is set in the route params
+      if (route.params?.shouldReload) {
+        // Fetch items if the flag is true (user posted a new item)
+        fetchItems();
+
+        // Reset the 'shouldReload' flag in the route params
+        navigation.setParams({ shouldReload: false });
+      }
+    });
+
+    // Clean up the listener when the component unmounts
+    return unsubscribe;
+  }, [navigation, route.params?.shouldReload]);
+
 
   const toggleFilterModal = () => {
     setFilterModalVisible(!isFilterModalVisible);
@@ -49,11 +70,17 @@ const FeedScreen = () => {
     setSearchText(text);
     // You can add search functionality here
   };
+  const handleNavigateToSearch = () => {
+    navigation.navigate(
+      "FilterItemScreen"
+    )
+  }
   const fetchItems = async () => {
 
     setLoading(true)
     try {
-      const response = await axios.get("http://192.168.74.44:3000/api/feed")
+      const response = await axios.get(`${baseUrl}/api/feed`)
+
       const items = await response.data.items
 
       if (response.status == 200) {
@@ -85,7 +112,7 @@ const FeedScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={{}} onPress={fetchItems}>
-          <MaterialIcons name="refresh" size={25} color={colors.primary.darkblue} />
+          <MaterialIcons name="refresh" size={30} color={colors.primary.darkblue} />
         </TouchableOpacity>
         <View style={styles.searchBar}>
           <View style={styles.searchInput}>
@@ -96,14 +123,14 @@ const FeedScreen = () => {
 
 
             />
-            <TouchableOpacity style={{}}>
+            <TouchableOpacity onPress={handleNavigateToSearch} style={{}}>
               <Feather name="search" size={25} color={colors.primary.darkblue} />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={toggleFilterModal} style={styles.filterButton}>
+          {/* <TouchableOpacity onPress={toggleFilterModal} style={styles.filterButton}>
             <Ionicons name="filter" color="#fff" size={24} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
       {/* <ScrollView
@@ -126,10 +153,10 @@ const FeedScreen = () => {
         <Item />
       </ScrollView> */}
       <Loader loading={loading} />
-      
+
 
       <FlatList
-      showsVerticalScrollIndicator={false}
+        
         contentContainerStyle={styles.listContainer}
         data={feedItems}
         style={{ marginBottom: 70 }}
@@ -339,7 +366,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 20,
+    marginHorizontal: 5,
     marginTop: 20,
   },
   searchBar: {

@@ -3,7 +3,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet } from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
-const Item = ({ item }) => {
+const Item = ({ item ,showBottomButtons}) => {
     const navigation = useNavigation()
     const options = {
         year: 'numeric',
@@ -13,7 +13,7 @@ const Item = ({ item }) => {
         minute: 'numeric',
     };
     const handleItemView = () => {
-        navigation.navigate("ItemViewScreen", { item: item })
+        navigation.navigate("ItemViewScreen", { item: item, showBottomButtons })
     }
     return (
         <TouchableOpacity style={styles.container} onPress={handleItemView}>
@@ -38,7 +38,7 @@ const Item = ({ item }) => {
 
 const styles = StyleSheet.create({
     container: {
-        width: Dimensions.get('window').width * 0.4,
+        width: Dimensions.get('window').width * 0.43,
         elevation: 2,
         shadowOffset: {
             width: 0,
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         backgroundColor: '#edeff7',
         borderRadius: 10,
-        margin: 13
+        margin: 10
 
     },
     imageContainer: {
@@ -75,11 +75,14 @@ const styles = StyleSheet.create({
     locationText: {
         color: '#040824',
         marginLeft: 5,
+        fontWeight: '600',
+        fontSize: 15
+
     },
     timestamp: {
         color: '#040824',
         fontSize: 12,
-        fontWeight: '300',
+        fontWeight: '500',
         marginTop: 5,
     },
 });

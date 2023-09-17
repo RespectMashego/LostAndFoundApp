@@ -8,17 +8,20 @@ import { setUser } from './redux/userSlice';
 
 const AppNavigation = () => {
 
-    const [user, setUserForApp] = useState()
+    // const [user, setUserForApp] = useState(null)
     const dispatch = useDispatch()
 
-    // const user = useSelector((state) => state.user.user);
+    const user = useSelector((state) => state.user.user);
+    // const token = useSelector((state) => state.user.token);
+    // console.log("token", token);
+
 
     const checkUserExsits = async () => {
         const userFromAysncStorage = await getItem("user")
-        const token=await getItem("token")
+        const token = await getItem("token")
+        console.log(token);
         if (userFromAysncStorage) {
             const user = JSON.parse(userFromAysncStorage)
-            setUserForApp(user)
             dispatch(setUser({ user, token }))
 
 

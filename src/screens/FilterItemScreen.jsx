@@ -1,26 +1,40 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, Dimensions, StyleSheet, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Dimensions, StyleSheet, TextInput } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import axios from 'axios'; // Import axios if not already imported
+import Item from '../components/Item';
 
 const FilterItemScreen = () => {
-  const [selectedFilter, setSelectedFilter] = useState('lost');
-  const [searchText, setSearchText] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterdItems, setFilteredItems] = useState([]); // Initialize with an empty array
+  const navigation = useNavigation();
 
-  const navigation=useNavigation()
+  useEffect(() => {
+    // Call the filtering function when the component mounts
+    filterItemsfromBackend();
+  }, []);
 
-  const handleFilterChange = (filter) => {
-    setSelectedFilter(filter);
+  const filterItemsfromBackend = async () => {
+    try {
+      const respond = await axios.get(`${baseUrl}/apilfilter/${searchQuery}`);
+
+      if (!respond.ok) {
+        console.error("Network respond was not ok");
+      }
+
+      const data = respond?.data.items || []; // Ensure data is an array
+      console.log(data);
+      setFilteredItems(data);
+    } catch (error) {
+      console.error("error", error);
+    }
   };
 
-  const handleSearch = (text) => {
-    setSearchText(text);
-    // You can add search functionality here
+  const handleBack = () => {
+    navigation.goBack();
   };
-  const handleBack=()=>{
-    navigation.goBack()
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,50 +45,37 @@ const FilterItemScreen = () => {
         <View style={styles.searchBar}>
           <TextInput
             placeholder="Search"
-            value={searchText}
-            onChangeText={handleSearch}
+            value={searchQuery}
+            onChangeText={text => setSearchQuery(text)} // Update searchQuery
+            onBlur={filterItemsfromBackend} // Trigger filtering when input loses focus
             style={styles.searchInput}
           />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={filterItemsfromBackend}>
             <Feather name="search" color="#040824" size={24} />
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.filterButtons}>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            selectedFilter === 'lost' && styles.selectedFilter,
-          ]}
-          onPress={() => handleFilterChange('lost')}
-        >
-          <Text
-            style={[
-              styles.filterButtonText,
-              selectedFilter === 'lost' && styles.selectedFilterText,
-            ]}
-          >
-            Lost Items
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            selectedFilter === 'found' && styles.selectedFilter,
-          ]}
-          onPress={() => handleFilterChange('found')}
-        >
-          <Text
-            style={[
-              styles.filterButtonText,
-              selectedFilter === 'found' && styles.selectedFilterText,
-            ]}
-          >
-            Found Items
-          </Text>
-        </TouchableOpacity>
+      <View className="flex-1 items-center justify-center">
+        {
+          filterdItems.length > 0 ?
+            <FlatList
+              contentContainerStyle={{ flexGrow: 1 }}
+              data={filterdItems}
+              style={{ marginBottom: 70 }}
+              numColumns={2}
+              renderItem={({ item }) => <Item item={item} />}
+              keyExtractor={item => item._id}
+            /> :
+            <View className="items-center justify-center ">
+              <Text>
+                Search  Text
+              </Text>
+
+            </View>
+
+        }
+
       </View>
-      {/* Add your filter options or other content here */}
     </SafeAreaView>
   );
 };

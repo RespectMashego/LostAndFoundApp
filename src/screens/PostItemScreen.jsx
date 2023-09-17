@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, StyleSheet, ScrollView, ActivityIndicator, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Alert, Text, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, StyleSheet, ScrollView, ActivityIndicator, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import { colors } from './colors';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, } from '@react-navigation/native';
 import axios from 'axios';
 import Loader from '../components/Loader';
 import { getItem } from '../util/asyncStorage';
+import { baseUrl } from '../util/baseUrl';
 
 
 const PostItemScreen = () => {
+  const route = useRoute()
+  const { item = null, update = false } = route?.params || {}
+  console.log();
 
+  console.log(item, update);
   const [step, setStep] = useState(1);
-  const [itemName, setItemName] = useState('');
+  const [itemName, setItemName] = useState("");
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [selectedImages, setSelectedImages] = useState(Array(4).fill(null));
@@ -22,6 +27,21 @@ const PostItemScreen = () => {
   const [contact, setContact] = useState("")
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation()
+  useEffect(() => {
+    if (update) {
+      // Update state variables with the current item details
+      setItemName(item?.itemName || '');
+      setCategory(item?.category || '');
+      setDescription(item?.description || '');
+      setLocation(item?.location || '');
+      setContact(item?.contact || '');
+      // Handle other state variables as needed
+    }
+  }, [update, item]);
+
+
+
+
 
   console.log(selectedImages);
 
@@ -52,7 +72,7 @@ const PostItemScreen = () => {
     });
 
     try {
-      const response = await axios.post('http://192.168.74.44:3000/api/item', formData, {
+      const response = await axios.post(`${baseUrl}/api/item`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`,
@@ -60,6 +80,7 @@ const PostItemScreen = () => {
       });
 
       if (response.status === 201) {
+        navigation.navigate('FeedScreen', { shouldReload: true });
         console.log('Item posted successfully');
       } else {
         console.log('Failed to post item');
@@ -81,18 +102,18 @@ const PostItemScreen = () => {
     setStep(1)
 
     // Navigate back to the initial step after submission
-    navigation.navigate('FeedScreen');
+
   };
 
 
   const handleNextStep = () => {
     // Validate and move to the next step
     if (step === 1 && (!itemName || !category || !description || !contact || !location)) {
-      alert('Please fill in all fields.');
+      Alert.alert('Please fill in all fields.');
       return;
     }
     if (step === 2 && (!selectedImages)) {
-      alert('Please select at least one image of the item');
+      Alert.alert('Please select at least one image of the item');
     }
 
     // You can add more validation for other steps if needed
@@ -154,20 +175,20 @@ const PostItemScreen = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Loader loading={loading} />
-
         <KeyboardAvoidingView style={styles.formContainer} behavior="padding">
           {step === 1 && (
             <>
               <View style={styles.header}>
                 <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                  <Ionicons name="arrow-back" color="#19204f" size={30} />
+                  <Ionicons name="arrow-back" color="#19204f" size={35} />
                 </TouchableOpacity>
+
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>Post New Item</Text>
+                </View>
               </View>
               <View>
 
-                <View style={styles.titleContainer}>
-                  <Text style={styles.title}>Post Lost or Found Item</Text>
-                </View>
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Item Name</Text>
                   <TextInput
@@ -281,55 +302,7 @@ const PostItemScreen = () => {
               {isCameraOpen && <ActivityIndicator size="large" color="#19204f" />}
             </View>
           )}
-          {/* {step === 3 && (<View>
-            <View style={styles.header}>
-              <TouchableOpacity style={styles.backButton} onPress={() => setStep(step - 1)}>
-                <Ionicons name="arrow-back" color="#19204f" size={30} />
-              </TouchableOpacity>
-            </View>
-            <View>
 
-              <Text style={{
-                color: colors.primary.darkblue,
-                fontSize: 19,
-                fontWeight: "700",
-                marginBottom: 20,
-                marginLeft: 5
-
-              }}>User Info</Text>
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your Name"
-                value={itemName}
-                onChangeText={text => setItemName(text)}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>User Number</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your number"
-                value={itemName}
-                onChangeText={text => setItemName(text)}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Item Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter item name"
-                value={itemName}
-                onChangeText={text => setItemName(text)}
-              />
-            </View>
-
-
-          </View>)
-
-          } */}
 
         </KeyboardAvoidingView>
       </ScrollView>
@@ -339,9 +312,13 @@ const PostItemScreen = () => {
             <Text style={styles.continueButtonText}>Continue</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity disabled={loading} style={[styles.submitButton,{backgroundColor:loading? "lightblue" :""}]} onPress={handlePostItem}>
-            <Text style={styles.submitButtonText}>Create Post</Text>
-          </TouchableOpacity>
+          update === false ?
+            <TouchableOpacity disabled={loading} style={[styles.submitButton, { backgroundColor: loading ? "lightblue" : "" }]} onPress={handlePostItem}>
+              <Text style={styles.submitButtonText}>Create Post</Text>
+            </TouchableOpacity> :
+            <TouchableOpacity disabled={loading} style={[styles.submitButton, { backgroundColor: loading ? "lightblue" : "" }]} onPress={handlePostItem}>
+              <Text style={styles.submitButtonText}>Update Post</Text>
+            </TouchableOpacity>
         )}
       </View>
     </SafeAreaView>
@@ -357,13 +334,19 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   header: {
-    margin: 15,
+    margin: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: "center",
+    marginBottom: 35,
+    marginTop: 10
+
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    position: "absolute",
+    left: 2
   },
   backButtonText: {
     color: '#19204f',
@@ -373,13 +356,15 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     justifyContent: 'center',
-    marginLeft: 20,
+    alignItems: "center"
+
   },
   title: {
     fontSize: 19,
     fontWeight: 'bold',
     color: colors.primary.darkblue,
-    marginBottom: 20
+
+
   },
   formContainer: {
     flex: 1,
@@ -387,22 +372,23 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 25,
+    marginHorizontal: 5
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 5,
+    marginBottom: 7,
     marginLeft: 10,
     color: colors.primary.darkblue,
   },
   input: {
-    backgroundColor: '#f0f0f0',
-    borderColor: '#e8e8e8',
-    borderWidth: 2,
+    backgroundColor: '#f1f1f1',
+    // borderColor: '#e8e8e8',
+    // borderWidth: 2,
     borderRadius: 20,
     paddingLeft: 15,
-    paddingVertical: 10,
+    paddingVertical: 12,
   },
   buttonContainer: {
     justifyContent: 'center',
@@ -410,9 +396,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   continueButton: {
-    backgroundColor: colors.primary.blue,
+    backgroundColor: colors.primary.darkblue,
     borderRadius: 20,
-    paddingVertical: 13,
+    paddingVertical: 15,
     paddingHorizontal: 30,
     width: '93%',
     justifyContent: 'center',
@@ -423,9 +409,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   submitButton: {
-    backgroundColor: colors.primary.blue,
+    backgroundColor: colors.primary.darkblue,
     borderRadius: 20,
-    paddingVertical: 13,
+    paddingVertical: 15,
     paddingHorizontal: 30,
     width: '93%',
     justifyContent: 'center',

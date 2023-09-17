@@ -8,6 +8,7 @@ import Loader from '../components/Loader';
 import axios from 'axios';
 import Item from '../components/Item';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons"
+import { baseUrl } from '../util/baseUrl';
 
 const LostFoundProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('PostedItems');
@@ -28,7 +29,7 @@ const LostFoundProfileScreen = () => {
     setLoading(true)
     const token = await getItem("token")
     try {
-      const response = await axios("http://192.168.74.44:3000/user/posted-items", {
+      const response = await axios(`${baseUrl}/user/posted-items`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -83,14 +84,13 @@ const LostFoundProfileScreen = () => {
       return (
         <View style={styles.tabContent}>
           {/* Display the user's posted items here */}
-          {/* You can use a FlatList or any other component to display the items */}
-          {istherError ? <View>
+          {istherError ? <View className="w-full items-center pt-11 justify-center mb-10">
 
-            <Text>Failed to load</Text>
-            <TouchableOpacity className="flex-row items-center bg-primary-blue gap-x-2">
-              <Text className="text-md text-primary-white mr-1 ">refresh</Text>
+            <Text className="font-medium text-lg mb-5">Failed to load items</Text>
+            <TouchableOpacity onPress={fetchUserItems} className="flex-row px-2 w-[100px] rounded items-center bg-primary-blue">
+              <Text className="text-md p-1 text-primary-white mr-1 text-lg ">refresh</Text>
+              <MaterialIcons name="refresh" size={25} color={"white"} />
               <TouchableOpacity style={{}} onPress={fetchUserItems}>
-                <MaterialIcons name="refresh" size={25} color={"white"} />
               </TouchableOpacity>
             </TouchableOpacity>
           </View> :
@@ -98,9 +98,10 @@ const LostFoundProfileScreen = () => {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContainer}
               data={userPostedItems}
-              style={{ marginBottom: 70 }}
+
+              style={{ marginBottom: 10, height: '75%' }}
               numColumns={2}
-              renderItem={({ item }) => <Item item={item} />}
+              renderItem={({ item }) => <Item showBottomButtons={true} item={item} />}
               keyExtractor={item => item._id}
             />
           }
@@ -173,11 +174,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
+    padding: 10,
+
     alignItems: 'center',
   },
   listContainer: {
     flexGrow: 1,
+    alignSelf: "center"
 
 
 
