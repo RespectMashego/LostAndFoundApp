@@ -5,6 +5,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios'; // Import axios if not already imported
 import Item from '../components/Item';
+import { baseUrl } from '../util/baseUrl';
 
 const FilterItemScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');

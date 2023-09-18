@@ -28,6 +28,7 @@ const LostFoundProfileScreen = () => {
     setIstheError(false)
     setLoading(true)
     const token = await getItem("token")
+    console.log("token", token)
     try {
       const response = await axios(`${baseUrl}/user/posted-items`, {
         headers: {
@@ -94,17 +95,22 @@ const LostFoundProfileScreen = () => {
               </TouchableOpacity>
             </TouchableOpacity>
           </View> :
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.listContainer}
-              data={userPostedItems}
+            !userPostedItems.length == 0 ?
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.listContainer}
+                data={userPostedItems}
 
-              style={{ marginBottom: 10, height: '75%' }}
-              numColumns={2}
-              renderItem={({ item }) => <Item showBottomButtons={true} item={item} />}
-              keyExtractor={item => item._id}
-            />
+                style={{ marginBottom: 10, height: '75%' }}
+                numColumns={2}
+                renderItem={({ item }) => <Item showBottomButtons={true} item={item} />}
+                keyExtractor={item => item._id}
+              />
+              : <View className="items-center justify-center my-5 ">
+                <Text>You have not posted items yet</Text>
+              </View>
           }
+     
 
 
 

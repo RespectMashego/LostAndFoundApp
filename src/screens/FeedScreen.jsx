@@ -27,6 +27,7 @@ const FeedScreen = ({ navigation, route }) => {
   const [selectedType, setSelectedType] = useState('all');
   const [searchText, setSearchText] = useState('');
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
 
   const [feedItems, setFeedItems] = useState([])
   useEffect(() => {
@@ -76,7 +77,7 @@ const FeedScreen = ({ navigation, route }) => {
     )
   }
   const fetchItems = async () => {
-
+    setError(false)
     setLoading(true)
     try {
       const response = await axios.get(`${baseUrl}/api/feed`)
@@ -95,9 +96,11 @@ const FeedScreen = ({ navigation, route }) => {
     }
     catch (error) {
       console.error("error", error)
+      setError(true)
     }
     finally {
       setLoading(false)
+
     }
 
   }
@@ -155,15 +158,23 @@ const FeedScreen = ({ navigation, route }) => {
       <Loader loading={loading} />
 
 
-      <FlatList
-        
-        contentContainerStyle={styles.listContainer}
-        data={feedItems}
-        style={{ marginBottom: 70 }}
-        numColumns={2}
-        renderItem={({ item }) => <Item item={item} />}
-        keyExtractor={item => item._id}
-      />
+      {
+        !error ?
+
+          < FlatList
+
+            contentContainerStyle={styles.listContainer}
+            data={feedItems}
+            style={{ marginBottom: 70 }}
+            numColumns={2}
+            renderItem={({ item }) => <Item item={item} />}
+            keyExtractor={item => item._id}
+
+          />
+          : <View>
+            <Text>There was problem with loading items.try to refresh</Text>
+          </View>
+      }
 
       {/* Filter Modal */}
       <Modal
