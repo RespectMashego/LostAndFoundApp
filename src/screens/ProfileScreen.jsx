@@ -9,15 +9,24 @@ import axios from 'axios';
 import Item from '../components/Item';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons"
 import { baseUrl } from '../util/baseUrl';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { colors } from './colors';
 
 const LostFoundProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('PostedItems');
   const [loading, setLoading] = useState(false)
   const [userPostedItems, setUserPostedItems] = useState([])
   const [istherError, setIstheError] = useState(false)
-  const [userr, setUserr] = useState('')
+
+  const [showText, setShowText] = useState(false)
   const dispatch = useDispatch()
+
   const user = useSelector((state) => state.user.user);
+
+
+
+
+
   useEffect(() => {
     console.log(user);
 
@@ -39,9 +48,17 @@ const LostFoundProfileScreen = () => {
 
         const items = await response.data.userPostedItems
         console.log(items);
-        setUserPostedItems(items)
-        setIstheError(false)
+        if (items?.length > 0) {
+          setUserPostedItems(items)
+          setIstheError(false)
+          setShowText(false)
+        }
+        else {
+          setShowText(true)
+        }
+
       } else {
+
         console.error("error occured")
       }
     }
@@ -59,6 +76,7 @@ const LostFoundProfileScreen = () => {
     fetchUserItems()
 
   }, [])
+
 
   const switchTab = (tabName) => {
     setActiveTab(tabName);
@@ -85,6 +103,11 @@ const LostFoundProfileScreen = () => {
       return (
         <View style={styles.tabContent}>
           {/* Display the user's posted items here */}
+          <View>
+            <TouchableOpacity style={{}} onPress={fetchUserItems}>
+              <MaterialIcons name="refresh" size={30} color={colors.primary.darkblue} />
+            </TouchableOpacity>
+          </View>
           {istherError ? <View className="w-full items-center pt-11 justify-center mb-10">
 
             <Text className="font-medium text-lg mb-5">Failed to load items</Text>
@@ -95,24 +118,26 @@ const LostFoundProfileScreen = () => {
               </TouchableOpacity>
             </TouchableOpacity>
           </View> :
-            !userPostedItems.length == 0 ?
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.listContainer}
-                data={userPostedItems}
 
-                style={{ marginBottom: 10, height: '75%' }}
-                numColumns={2}
-                renderItem={({ item }) => <Item showBottomButtons={true} item={item} />}
-                keyExtractor={item => item._id}
-              />
-              : <View className="items-center justify-center my-5 ">
-                <Text>You have not posted items yet</Text>
-              </View>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.listContainer}
+              data={userPostedItems}
+
+              style={{ marginBottom: 10, height: '72%' }}
+              numColumns={2}
+              renderItem={({ item }) => <Item showBottomButtons={true} item={item} />}
+              keyExtractor={item => item._id}
+            />
+
+
           }
-     
 
-
+          {/* {
+            showText && <Text>
+              You have not yet posted items
+            </Text>
+          } */}
 
         </View>
       );
@@ -121,7 +146,7 @@ const LostFoundProfileScreen = () => {
         <View style={styles.tabContent}>
           {/* Display the user's notifications here */}
           {/* You can use a FlatList or any other component to display notifications */}
-          <Text>Your Notifications</Text>
+          <Text>Feature will be available in a next update</Text>
         </View>
       );
     }
