@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:'transparent',
-    zIndex:4
+    backgroundColor:'lightgrey',
+    zIndex:4,
+    
   },
 });

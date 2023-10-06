@@ -80,8 +80,8 @@ const ItemView = () => {
     const BoxDetails = ({ fieldName, info }) => {
         return (<View className=" flex-col items-center  justify-between">
             <View className=" w-full flex-row items-center mt-5 mb-5 justify-between  ">
-                <Text className="text-[16px]">{fieldName}</Text>
-                <Text className="text-[16px]">{info}</Text>
+                <Text className="text-[16px] text-primary-darkblue">{fieldName}</Text>
+                <Text className="text-[16px] ">{info}</Text>
             </View>
             <View className="w-full h-[1px] bg-primary-darkblue" />
 
@@ -126,7 +126,7 @@ const ItemView = () => {
             <ScrollView style={styles.detailsContainer}>
 
                 <BoxDetails fieldName="Item Name" info={item.itemName} />
-                <BoxDetails fieldName="Category" info={item.category} />
+                {/* <BoxDetails fieldName="Category" info={item.category} /> */}
                 <BoxDetails fieldName="Description" info={item.description} />
                 <BoxDetails fieldName="Location" info={item.location} />
                 <BoxDetails fieldName="Contact" info={item.contact} />
@@ -137,17 +137,17 @@ const ItemView = () => {
             </ScrollView>
             {showBottomButtons &&
                 <View style={styles.buttonsContainer}>
-                    <TouchableOpacity style={styles.button} onPress={() => markAsFound()}>
+                    {/* <TouchableOpacity style={styles.button} onPress={() => markAsFound()}>
                         <FontAwesome name="check" color="#fff" size={20} />
                         <Text style={styles.buttonText}> Found</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity style={styles.button} onPress={() => editItem()}>
                         <Ionicons name="create-outline" color="#fff" size={20} />
                         <Text style={styles.buttonText}>Edit</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button} onPress={() => deleteItem()}>
-                        <Ionicons name="create-outline" color="#fff" size={20} />
-                        <Text style={styles.buttonText}>Delete</Text>
+                        <FontAwesome name="check" color="#fff" size={20} />
+                        <Text style={styles.buttonText}>Found</Text>
                     </TouchableOpacity>
                 </View>
             }
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'between',
+        justifyContent: 'center',
         backgroundColor: '#19204f',
         borderRadius: 10,
         marginHorizontal: 5,
@@ -274,7 +274,8 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        marginLeft: 5,
+        marginLeft: 10,
+
     },
     buttonsContainer: {
         flexDirection: 'row',

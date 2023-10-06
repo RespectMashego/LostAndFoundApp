@@ -1,102 +1,94 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  FlatList,
+  Dimensions,
+  Alert,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearUser } from '../redux/userSlice';
-import { getItem, removeItem } from '../util/asyncStorage';
+import {useDispatch, useSelector} from 'react-redux';
+import {clearUser} from '../redux/userSlice';
+import {getItem, removeItem} from '../util/asyncStorage';
 import Loader from '../components/Loader';
 import axios from 'axios';
 import Item from '../components/Item';
-import MaterialIcons from "react-native-vector-icons/MaterialIcons"
-import { baseUrl } from '../util/baseUrl';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { colors } from './colors';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {baseUrl} from '../util/baseUrl';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {colors} from './colors';
 
 const LostFoundProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('PostedItems');
-  const [loading, setLoading] = useState(false)
-  const [userPostedItems, setUserPostedItems] = useState([])
-  const [istherError, setIstheError] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [userPostedItems, setUserPostedItems] = useState([]);
+  const [istherError, setIstheError] = useState(false);
 
-  const [showText, setShowText] = useState(false)
-  const dispatch = useDispatch()
+  const [itemExists, setItemsExists] = useState(true);
+  const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.user.user);
-
-
-
-
+  const user = useSelector(state => state.user.user);
 
   useEffect(() => {
     console.log(user);
-
-  }, [user])
-  console.log("user", user);
+  }, [user]);
+  console.log('user', user);
 
   const fetchUserItems = async () => {
-    setIstheError(false)
-    setLoading(true)
-    const token = await getItem("token")
-    console.log("token", token)
+    setItemsExists(true)
+    setIstheError(false);
+    setLoading(true);
+    const token = await getItem('token');
+    console.log('token', token);
     try {
       const response = await axios(`${baseUrl}/user/posted-items`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-      })
+      });
+      const items = await response.data.userPostedItems;
+      console.log('user items', items);
       if (response.status == 200) {
-
-        const items = await response.data.userPostedItems
-        console.log(items);
         if (items?.length > 0) {
-          setUserPostedItems(items)
-          setIstheError(false)
-          setShowText(false)
+          setUserPostedItems(items);
+          setIstheError(false);
+          setShowText(false);
         }
-        else {
-          setShowText(true)
-        }
-
-      } else {
-
-        console.error("error occured")
+      } else if (response.status == 201) {
+        setUserPostedItems(items);
+        setItemsExists(false)
       }
+    } catch (error) {
+      console.error('error occured', error);
+      setIstheError(true);
+    } finally {
+      setLoading(false);
     }
-    catch (error) {
-      console.error("error occured", error)
-      setIstheError(true)
-    }
-    finally {
-      setLoading(false)
-    }
-
-  }
+  };
 
   useEffect(() => {
-    fetchUserItems()
+    fetchUserItems();
+  }, []);
 
-  }, [])
-
-
-  const switchTab = (tabName) => {
+  const switchTab = tabName => {
     setActiveTab(tabName);
   };
 
-
   const handleLogout = async () => {
     try {
-      setLoading(!loading)
-      dispatch(clearUser())
-      await removeItem("user")
-      await removeItem("token")
-    }
-    catch (error) {
+      setLoading(!loading);
+      dispatch(clearUser());
+      await removeItem('user');
+      await removeItem('token');
+    } catch (error) {
       console.error('Logout failed', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-
-  }
+  };
 
   const renderTabContent = () => {
     if (activeTab === 'PostedItems') {
@@ -105,40 +97,47 @@ const LostFoundProfileScreen = () => {
           {/* Display the user's posted items here */}
           <View>
             <TouchableOpacity style={{}} onPress={fetchUserItems}>
-              <MaterialIcons name="refresh" size={30} color={colors.primary.darkblue} />
+              <MaterialIcons
+                name="refresh"
+                size={30}
+                color={colors.primary.darkblue}
+              />
             </TouchableOpacity>
           </View>
-          {istherError ? <View className="w-full items-center pt-11 justify-center mb-10">
-
-            <Text className="font-medium text-lg mb-5">Failed to load items</Text>
-            <TouchableOpacity onPress={fetchUserItems} className="flex-row px-2 w-[100px] rounded items-center bg-primary-blue">
-              <Text className="text-md p-1 text-primary-white mr-1 text-lg ">refresh</Text>
-              <MaterialIcons name="refresh" size={25} color={"white"} />
-              <TouchableOpacity style={{}} onPress={fetchUserItems}>
+          {istherError ? (
+            <View className="w-full items-center pt-11 justify-center mb-10">
+              <Text className="font-medium text-lg mb-5">
+                Failed to load items
+              </Text>
+              <TouchableOpacity
+                onPress={fetchUserItems}
+                className="flex-row px-2 w-[100px] rounded items-center bg-primary-blue">
+                <Text className="text-md p-1 text-primary-white mr-1 text-lg ">
+                  refresh
+                </Text>
+                <MaterialIcons name="refresh" size={25} color={'white'} />
+                <TouchableOpacity
+                  style={{}}
+                  onPress={fetchUserItems}></TouchableOpacity>
               </TouchableOpacity>
-            </TouchableOpacity>
-          </View> :
-
+            </View>
+          ) : itemExists ? (
             <FlatList
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContainer}
               data={userPostedItems}
-
-              style={{ marginBottom: 10, height: '72%' }}
+              style={{marginBottom: 10, height: '72%'}}
               numColumns={2}
-              renderItem={({ item }) => <Item showBottomButtons={true} item={item} />}
+              renderItem={({item}) => (
+                <Item showBottomButtons={true} item={item} />
+              )}
               keyExtractor={item => item._id}
             />
-
-
-          }
-
-          {/* {
-            showText && <Text>
-              You have not yet posted items
-            </Text>
-          } */}
-
+          ) : (
+            <View>
+              <Text>You have not posted items yet</Text>
+            </View>
+          )}
         </View>
       );
     } else if (activeTab === 'Notifications') {
@@ -167,12 +166,8 @@ const LostFoundProfileScreen = () => {
 
       <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={[
-            styles.tab,
-            activeTab === 'PostedItems' && styles.activeTab,
-          ]}
-          onPress={() => switchTab('PostedItems')}
-        >
+          style={[styles.tab, activeTab === 'PostedItems' && styles.activeTab]}
+          onPress={() => switchTab('PostedItems')}>
           <Text style={styles.tabText}>Posted Items</Text>
         </TouchableOpacity>
 
@@ -181,8 +176,7 @@ const LostFoundProfileScreen = () => {
             styles.tab,
             activeTab === 'Notifications' && styles.activeTab,
           ]}
-          onPress={() => switchTab('Notifications')}
-        >
+          onPress={() => switchTab('Notifications')}>
           <Text style={styles.tabText}>Notifications</Text>
         </TouchableOpacity>
       </View>
@@ -192,7 +186,9 @@ const LostFoundProfileScreen = () => {
       {/* <TouchableOpacity style={styles.editButton}>
         <Text style={styles.editButtonText}>Edit Profile</Text>
       </TouchableOpacity> */}
-      <TouchableOpacity className="bg-primary-blue rounded-xl   " onPress={handleLogout}>
+      <TouchableOpacity
+        className="bg-primary-blue rounded-xl   "
+        onPress={handleLogout}>
         <Text className="text-primary-white px-6 py-3 text-[19px] ">
           Log out
         </Text>
@@ -206,15 +202,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 10,
+    height: Dimensions.get('window').height,
 
     alignItems: 'center',
   },
   listContainer: {
     flexGrow: 1,
-    alignSelf: "center"
-
-
-
+    alignSelf: 'center',
   },
   profileImage: {
     width: 150,
@@ -234,7 +228,7 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-
+    position: 'relative',
   },
   tab: {
     flex: 1,
@@ -252,9 +246,11 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     width: '100%',
-    // height: "75%",
+    height: '77%',
+    justifyContent: 'center',
+    alignItems: 'center',
 
-    overflow: "hidden",
+    overflow: 'hidden',
     // backgroundColor:"red"
   },
   editButton: {

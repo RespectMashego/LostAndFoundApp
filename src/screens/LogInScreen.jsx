@@ -144,15 +144,15 @@ const LogInScreen = () => {
             <Text className="text-primary-blue font-medium">Sign Up</Text>
           </TouchableOpacity>
         </View>
-      </View>
-
-      <TouchableOpacity
+        <TouchableOpacity
         onPress={handleLogIn}
-        className="  bg-primary-blue rounded-full  justify-center items-center w-[90%]  mx-auto mb-4 shadow-primary-black">
+        className="  bg-primary-blue rounded-full  justify-center items-center w-[100%]  mx-auto mb-4 shadow-primary-black">
         <Text style={{ color: 'white' }} className="text-primary-white py-4 font-medium ">
           Log In
         </Text>
       </TouchableOpacity>
+      </View>
+
     </SafeAreaView>
   );
 };

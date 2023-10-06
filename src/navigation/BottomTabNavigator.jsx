@@ -21,6 +21,7 @@ const BottomTabNavigator = () => {
                 backgroundColor: "#edeff7",
                 height: 70,
                 position: "absolute",
+                
                 margin: 15,
                 borderRadius: 30,
                 elevation: 0

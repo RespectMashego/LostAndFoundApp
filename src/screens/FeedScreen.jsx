@@ -118,14 +118,6 @@ const FeedScreen = ({ navigation, route }) => {
           <MaterialIcons name="refresh" size={30} color={colors.primary.darkblue} />
         </TouchableOpacity>
         <View style={styles.searchBar}>
-          <View style={styles.searchInput}>
-            <TextInput
-              placeholder="Search"
-              value={searchText}
-              onChangeText={handleSearch}
-
-
-            />
             <TouchableOpacity onPress={handleNavigateToSearch} style={{}}>
               <Feather name="search" size={25} color={colors.primary.darkblue} />
             </TouchableOpacity>
@@ -135,7 +127,7 @@ const FeedScreen = ({ navigation, route }) => {
             <Ionicons name="filter" color="#fff" size={24} />
           </TouchableOpacity> */}
         </View>
-      </View>
+    
       {/* <ScrollView
         contentContainerStyle={{
           height: '100%',
@@ -165,7 +157,7 @@ const FeedScreen = ({ navigation, route }) => {
 
             contentContainerStyle={styles.listContainer}
             data={feedItems}
-            style={{ marginBottom: 70 }}
+            style={{ marginBottom: 80 }}
             numColumns={2}
             renderItem={({ item }) => <Item item={item} />}
             keyExtractor={item => item._id}
@@ -370,7 +362,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F8F8',
     alignItems: 'center',
-
+// marginBottom:20
 
   },
   header: {

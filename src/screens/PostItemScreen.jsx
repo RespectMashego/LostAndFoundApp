@@ -93,7 +93,7 @@ const PostItemScreen = () => {
 
     // Reset the form fields after submitting
     setItemName('');
-    setCategory('');
+    // setCategory('');
     setDescription('');
     setLocation('');
     setContact(""),
@@ -198,7 +198,7 @@ const PostItemScreen = () => {
                     onChangeText={text => setItemName(text)}
                   />
                 </View>
-                <View style={styles.inputContainer}>
+                {/* <View style={styles.inputContainer}>
                   <Text style={styles.label}>Category</Text>
                   <TextInput
                     style={styles.input}
@@ -206,7 +206,7 @@ const PostItemScreen = () => {
                     value={category}
                     onChangeText={text => setCategory(text)}
                   />
-                </View>
+                </View> */}
 
 
 
