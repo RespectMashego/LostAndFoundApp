@@ -38,7 +38,7 @@ const LostFoundProfileScreen = () => {
   console.log('user', user);
 
   const fetchUserItems = async () => {
-    setItemsExists(true)
+    setItemsExists(true);
     setIstheError(false);
     setLoading(true);
     const token = await getItem('token');
@@ -59,7 +59,7 @@ const LostFoundProfileScreen = () => {
         }
       } else if (response.status == 201) {
         setUserPostedItems(items);
-        setItemsExists(false)
+        setItemsExists(false);
       }
     } catch (error) {
       console.error('error occured', error);
@@ -135,7 +135,9 @@ const LostFoundProfileScreen = () => {
             />
           ) : (
             <View>
-              <Text>You have not posted items yet</Text>
+              <Text style={{color: 'black', fontSize: 19}}>
+                You have not posted items yet
+              </Text>
             </View>
           )}
         </View>
@@ -145,7 +147,9 @@ const LostFoundProfileScreen = () => {
         <View style={styles.tabContent}>
           {/* Display the user's notifications here */}
           {/* You can use a FlatList or any other component to display notifications */}
-          <Text>Feature will be available in a next update</Text>
+          <Text style={{color: 'black', fontSize: 19}}>
+            Feature will be available in a next update
+          </Text>
         </View>
       );
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -14,22 +14,22 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Item from '../components/Item';
-import { colors } from './colors';
+import {colors} from './colors';
 import axios from 'axios';
-import MaterialIcons from "react-native-vector-icons/MaterialIcons"
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Loader from '../components/Loader';
-import { baseUrl } from '../util/baseUrl';
+import {baseUrl} from '../util/baseUrl';
 
-const FeedScreen = ({ navigation, route }) => {
+const FeedScreen = ({navigation, route}) => {
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
   const [searchText, setSearchText] = useState('');
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const [feedItems, setFeedItems] = useState([])
+  const [feedItems, setFeedItems] = useState([]);
   useEffect(() => {
     // Fetch items when the screen mounts
     fetchItems();
@@ -42,7 +42,7 @@ const FeedScreen = ({ navigation, route }) => {
         fetchItems();
 
         // Reset the 'shouldReload' flag in the route params
-        navigation.setParams({ shouldReload: false });
+        navigation.setParams({shouldReload: false});
       }
     });
 
@@ -50,84 +50,77 @@ const FeedScreen = ({ navigation, route }) => {
     return unsubscribe;
   }, [navigation, route.params?.shouldReload]);
 
-
   const toggleFilterModal = () => {
     setFilterModalVisible(!isFilterModalVisible);
   };
 
-  const handleFilterChange = (filter) => {
+  const handleFilterChange = filter => {
     setSelectedFilter(filter);
   };
 
-  const handleLocationChange = (location) => {
+  const handleLocationChange = location => {
     setSelectedLocation(location);
   };
 
-  const handleTypeChange = (type) => {
+  const handleTypeChange = type => {
     setSelectedType(type);
   };
 
-  const handleSearch = (text) => {
+  const handleSearch = text => {
     setSearchText(text);
     // You can add search functionality here
   };
   const handleNavigateToSearch = () => {
-    navigation.navigate(
-      "FilterItemScreen"
-    )
-  }
+    navigation.navigate('FilterItemScreen');
+  };
   const fetchItems = async () => {
-    setError(false)
-    setLoading(true)
+    setError(false);
+    setLoading(true);
     try {
-      const response = await axios.get(`${baseUrl}/api/feed`)
+      const response = await axios.get(`${baseUrl}/api/feed`);
 
-      const items = await response.data.items
+      const items = await response.data.items;
 
       if (response.status == 200) {
         console.log(items);
-        setFeedItems(items)
-        console.log("feed items fetched sucessfully")
+        setFeedItems(items);
+        console.log('feed items fetched sucessfully');
       } else {
-        console.log("failed to fetch items")
+        console.log('failed to fetch items');
       }
-
-
+    } catch (error) {
+      console.error('error', error);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
-    catch (error) {
-      console.error("error", error)
-      setError(true)
-    }
-    finally {
-      setLoading(false)
-
-    }
-
-  }
+  };
 
   useEffect(() => {
-
-    fetchItems()
-
-  }, [])
+    fetchItems();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={{}} onPress={fetchItems}>
-          <MaterialIcons name="refresh" size={30} color={colors.primary.darkblue} />
+          <MaterialIcons
+            name="refresh"
+            size={30}
+            color={colors.primary.darkblue}
+          />
         </TouchableOpacity>
-        <View style={styles.searchBar}>
-            <TouchableOpacity onPress={handleNavigateToSearch} style={{}}>
-              <Feather name="search" size={25} color={colors.primary.darkblue} />
-            </TouchableOpacity>
-          </View>
+        {/* <View style={styles.searchBar}> */}
+        <TouchableOpacity onPress={handleNavigateToSearch} style={{}}>
+          <Feather name="search" size={28} color={colors.primary.darkblue} />
+        </TouchableOpacity>
+        {/* </View> */}
 
-          {/* <TouchableOpacity onPress={toggleFilterModal} style={styles.filterButton}>
+        {/* <TouchableOpacity onPress={toggleFilterModal} style={styles.filterButton}>
             <Ionicons name="filter" color="#fff" size={24} />
           </TouchableOpacity> */}
-        </View>
-    
+      </View>
+
       {/* <ScrollView
         contentContainerStyle={{
           height: '100%',
@@ -149,31 +142,26 @@ const FeedScreen = ({ navigation, route }) => {
       </ScrollView> */}
       <Loader loading={loading} />
 
-
-      {
-        !error ?
-
-          < FlatList
-
-            contentContainerStyle={styles.listContainer}
-            data={feedItems}
-            style={{ marginBottom: 80 }}
-            numColumns={2}
-            renderItem={({ item }) => <Item item={item} />}
-            keyExtractor={item => item._id}
-
-          />
-          : <View>
-            <Text>There was problem with loading items.try to refresh</Text>
-          </View>
-      }
+      {!error ? (
+        <FlatList
+          contentContainerStyle={styles.listContainer}
+          data={feedItems}
+          style={{marginBottom: 80}}
+          numColumns={2}
+          renderItem={({item}) => <Item item={item} />}
+          keyExtractor={item => item._id}
+        />
+      ) : (
+        <View>
+          <Text>There was problem with loading items.try to refresh</Text>
+        </View>
+      )}
 
       {/* Filter Modal */}
       <Modal
         animationType="slide"
         transparent={true}
-        visible={isFilterModalVisible}
-      >
+        visible={isFilterModalVisible}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Filter Options</Text>
@@ -187,14 +175,13 @@ const FeedScreen = ({ navigation, route }) => {
                     styles.filterOption,
                     selectedFilter === 'all' && styles.selectedFilterOption,
                   ]}
-                  onPress={() => handleFilterChange('all')}
-                >
+                  onPress={() => handleFilterChange('all')}>
                   <Text
                     style={[
                       styles.filterOptionText,
-                      selectedFilter === 'all' && styles.selectedFilterOptionText,
-                    ]}
-                  >
+                      selectedFilter === 'all' &&
+                        styles.selectedFilterOptionText,
+                    ]}>
                     All
                   </Text>
                 </TouchableOpacity>
@@ -203,14 +190,13 @@ const FeedScreen = ({ navigation, route }) => {
                     styles.filterOption,
                     selectedFilter === 'lost' && styles.selectedFilterOption,
                   ]}
-                  onPress={() => handleFilterChange('lost')}
-                >
+                  onPress={() => handleFilterChange('lost')}>
                   <Text
                     style={[
                       styles.filterOptionText,
-                      selectedFilter === 'lost' && styles.selectedFilterOptionText,
-                    ]}
-                  >
+                      selectedFilter === 'lost' &&
+                        styles.selectedFilterOptionText,
+                    ]}>
                     Lost
                   </Text>
                 </TouchableOpacity>
@@ -219,14 +205,13 @@ const FeedScreen = ({ navigation, route }) => {
                     styles.filterOption,
                     selectedFilter === 'found' && styles.selectedFilterOption,
                   ]}
-                  onPress={() => handleFilterChange('found')}
-                >
+                  onPress={() => handleFilterChange('found')}>
                   <Text
                     style={[
                       styles.filterOptionText,
-                      selectedFilter === 'found' && styles.selectedFilterOptionText,
-                    ]}
-                  >
+                      selectedFilter === 'found' &&
+                        styles.selectedFilterOptionText,
+                    ]}>
                     Found
                   </Text>
                 </TouchableOpacity>
@@ -243,14 +228,13 @@ const FeedScreen = ({ navigation, route }) => {
                     styles.filterOption,
                     selectedLocation === 'all' && styles.selectedFilterOption,
                   ]}
-                  onPress={() => handleLocationChange('all')}
-                >
+                  onPress={() => handleLocationChange('all')}>
                   <Text
                     style={[
                       styles.filterOptionText,
-                      selectedLocation === 'all' && styles.selectedFilterOptionText,
-                    ]}
-                  >
+                      selectedLocation === 'all' &&
+                        styles.selectedFilterOptionText,
+                    ]}>
                     All
                   </Text>
                 </TouchableOpacity>
@@ -259,30 +243,29 @@ const FeedScreen = ({ navigation, route }) => {
                     styles.filterOption,
                     selectedLocation === 'city' && styles.selectedFilterOption,
                   ]}
-                  onPress={() => handleLocationChange('city')}
-                >
+                  onPress={() => handleLocationChange('city')}>
                   <Text
                     style={[
                       styles.filterOptionText,
-                      selectedLocation === 'city' && styles.selectedFilterOptionText,
-                    ]}
-                  >
+                      selectedLocation === 'city' &&
+                        styles.selectedFilterOptionText,
+                    ]}>
                     City
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[
                     styles.filterOption,
-                    selectedLocation === 'suburb' && styles.selectedFilterOption,
+                    selectedLocation === 'suburb' &&
+                      styles.selectedFilterOption,
                   ]}
-                  onPress={() => handleLocationChange('suburb')}
-                >
+                  onPress={() => handleLocationChange('suburb')}>
                   <Text
                     style={[
                       styles.filterOptionText,
-                      selectedLocation === 'suburb' && styles.selectedFilterOptionText,
-                    ]}
-                  >
+                      selectedLocation === 'suburb' &&
+                        styles.selectedFilterOptionText,
+                    ]}>
                     Suburb
                   </Text>
                 </TouchableOpacity>
@@ -299,14 +282,12 @@ const FeedScreen = ({ navigation, route }) => {
                     styles.filterOption,
                     selectedType === 'all' && styles.selectedFilterOption,
                   ]}
-                  onPress={() => handleTypeChange('all')}
-                >
+                  onPress={() => handleTypeChange('all')}>
                   <Text
                     style={[
                       styles.filterOptionText,
                       selectedType === 'all' && styles.selectedFilterOptionText,
-                    ]}
-                  >
+                    ]}>
                     All
                   </Text>
                 </TouchableOpacity>
@@ -315,14 +296,13 @@ const FeedScreen = ({ navigation, route }) => {
                     styles.filterOption,
                     selectedType === 'book' && styles.selectedFilterOption,
                   ]}
-                  onPress={() => handleTypeChange('book')}
-                >
+                  onPress={() => handleTypeChange('book')}>
                   <Text
                     style={[
                       styles.filterOptionText,
-                      selectedType === 'book' && styles.selectedFilterOptionText,
-                    ]}
-                  >
+                      selectedType === 'book' &&
+                        styles.selectedFilterOptionText,
+                    ]}>
                     Book
                   </Text>
                 </TouchableOpacity>
@@ -331,14 +311,13 @@ const FeedScreen = ({ navigation, route }) => {
                     styles.filterOption,
                     selectedType === 'phone' && styles.selectedFilterOption,
                   ]}
-                  onPress={() => handleTypeChange('phone')}
-                >
+                  onPress={() => handleTypeChange('phone')}>
                   <Text
                     style={[
                       styles.filterOptionText,
-                      selectedType === 'phone' && styles.selectedFilterOptionText,
-                    ]}
-                  >
+                      selectedType === 'phone' &&
+                        styles.selectedFilterOptionText,
+                    ]}>
                     Phone
                   </Text>
                 </TouchableOpacity>
@@ -347,7 +326,9 @@ const FeedScreen = ({ navigation, route }) => {
             </View>
 
             {/* Apply Button */}
-            <TouchableOpacity style={styles.applyButton} onPress={toggleFilterModal}>
+            <TouchableOpacity
+              style={styles.applyButton}
+              onPress={toggleFilterModal}>
               <Text style={styles.applyButtonText}>Apply Filters</Text>
             </TouchableOpacity>
           </View>
@@ -362,8 +343,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F8F8',
     alignItems: 'center',
-// marginBottom:20
-
+    // marginBottom:20
   },
   header: {
     flexDirection: 'row',
@@ -371,11 +351,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 5,
     marginTop: 20,
+    width: '100%',
+
+    paddingHorizontal:5
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
+    marginLeft: 10,
     flex: 1,
   },
   searchInput: {
@@ -384,16 +368,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginRight: 15,
     borderRadius: 10000,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 10
-
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
   },
   listContainer: {
     flexGrow: 1,
-
-
   },
   filterButton: {
     backgroundColor: '#040824',
